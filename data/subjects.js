@@ -27,5 +27,12 @@ window.SUBJECTS = [
     exam: "พฤหัสบดี 24 ก.ย. 2569 · 13.00–16.00",
     status: "ready",
     reviewPdf: "pb287-memory-review.pdf"
+  },
+  {
+    id: "wdm",
+    code: "WDM",
+    name: "Warehouse and Distribution Management",
+    exam: "ยังไม่มีประกาศวันสอบ",
+    status: "ready"
   }
 ];

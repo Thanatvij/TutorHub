@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TutorHub · Infographic Reviews</title>
+  <style>
+    @font-face{font-family:PlexThai;src:url('../fonts/ibm-plex-sans-thai-thai-400-normal.woff2') format('woff2');font-weight:400}
+    @font-face{font-family:PlexThai;src:url('../fonts/ibm-plex-sans-thai-thai-600-normal.woff2') format('woff2');font-weight:600}
+    @font-face{font-family:PlexThai;src:url('../fonts/ibm-plex-sans-thai-thai-700-normal.woff2') format('woff2');font-weight:700}
+    @font-face{font-family:PlexMono;src:url('../fonts/ibm-plex-mono-latin-600-normal.woff2') format('woff2');font-weight:600}
+    :root{--ink:#13213a;--muted:#526078;--paper:#f7f4ec;--line:#ced6df;--navy:#13213a;--teal:#0d8175;--cyan:#138fb0;--coral:#e85d4a;--yellow:#f1bd3f;--green:#3f8b68;--violet:#7158a6}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#d8dde3;color:var(--ink);font-family:PlexThai,system-ui,sans-serif}
+    body{display:grid;gap:80px;justify-content:center;padding:60px}
+    .poster{position:relative;width:2000px;overflow:hidden;background:var(--paper);box-shadow:0 24px 70px #14223a33;isolation:isolate}
+    .poster::before{content:"";position:absolute;inset:0;z-index:-2;background-image:linear-gradient(#20314d0b 1px,transparent 1px),linear-gradient(90deg,#20314d0b 1px,transparent 1px);background-size:48px 48px}
+    .poster::after{content:"";position:absolute;right:-240px;top:-250px;width:780px;height:780px;border:130px solid var(--accent);border-radius:50%;opacity:.10;z-index:-1}
+    .dti{height:3000px;--accent:var(--teal)}
+    .pb{height:4700px;--accent:var(--coral)}
+    .top{height:390px;padding:70px 90px 45px;display:grid;grid-template-columns:1fr auto;gap:50px;align-items:end;background:linear-gradient(135deg,#13213a 0%,#1b3152 70%,#224c5b 100%);color:#fff}
+    .pb .top{background:linear-gradient(135deg,#18233b 0%,#3f2942 68%,#6d3d37 100%)}
+    .eyebrow{font:600 24px PlexMono,monospace;letter-spacing:.18em;color:#8ee0d4;margin-bottom:16px}
+    .pb .eyebrow{color:#ffb39f}
+    h1{font-size:82px;line-height:1.08;margin:0 0 18px;letter-spacing:-.035em}
+    .subtitle{font-size:31px;line-height:1.45;margin:0;color:#dfe8f0;max-width:1320px}
+    .exam-chip{align-self:center;border:2px solid #ffffff55;border-radius:24px;padding:20px 25px;min-width:250px;background:#ffffff10;text-align:center}
+    .exam-chip b{display:block;font:600 22px PlexMono,monospace;color:#fff}
+    .exam-chip span{font-size:24px;color:#dfe8f0}
+    .map{height:135px;margin:0 90px;display:flex;align-items:center;gap:16px;border-bottom:2px solid var(--line)}
+    .map-label{font:700 22px PlexMono,monospace;letter-spacing:.12em;color:var(--accent);margin-right:10px}
+    .map-node{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:600;white-space:nowrap}
+    .map-node i{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;font:700 21px PlexMono,monospace;background:var(--accent);color:#fff;font-style:normal}
+    .map-arrow{font-size:29px;color:#96a0ae}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:30px;padding:35px 90px}
+    .dti .cards{height:2360px;grid-template-rows:1fr 1fr}
+    .pb .cards{height:4060px;grid-template-rows:1fr 1fr 1fr}
+    .pb .chapter{padding-top:32px;padding-bottom:24px}
+    .pb .terms{display:block;columns:2;column-gap:24px}
+    .pb .dense .term{padding:6px 0 5px;line-height:1.25}
+    .pb .dense .core{padding-top:10px;padding-bottom:10px;line-height:1.32}
+    .pb .mini-head{margin-top:10px}
+    .pb .memory{margin-top:12px;padding-top:11px;padding-bottom:11px}
+    .chapter{position:relative;border:2px solid #bfc9d4;border-radius:30px;padding:38px 38px 30px;background:#fffefaee;box-shadow:0 9px 0 #20314d0a;overflow:hidden}
+    .chapter::before{content:"";position:absolute;left:0;top:0;bottom:0;width:11px;background:var(--c)}
+    .chapter-head{display:grid;grid-template-columns:82px 1fr;gap:18px;align-items:center;margin-bottom:22px}
+    .num{display:grid;place-items:center;width:78px;height:66px;border-radius:19px;background:var(--c);color:#fff;font:700 27px PlexMono,monospace;white-space:nowrap;box-shadow:inset 0 -4px #0002}
+    .chapter h2{font-size:35px;line-height:1.18;margin:0;letter-spacing:-.018em}
+    .chapter-kicker{font:600 18px PlexMono,monospace;letter-spacing:.12em;color:var(--c);margin-bottom:4px;text-transform:uppercase}
+    .core{border-radius:18px;background:color-mix(in srgb,var(--c) 11%,#fff);border:1.5px solid color-mix(in srgb,var(--c) 34%,#fff);padding:15px 18px;margin-bottom:20px;font-size:24px;line-height:1.42}
+    .core b{color:var(--c)}
+    .terms{display:grid;grid-template-columns:1fr 1fr;column-gap:24px;row-gap:0}
+    .term{padding:12px 0 11px;border-bottom:1px solid #d8dee5;font-size:21px;line-height:1.32;break-inside:avoid}
+    .term b{display:block;font-size:22px;line-height:1.18;color:var(--ink)}
+    .term em{font-style:normal;color:var(--c);font-weight:600}
+    .term span{color:#4d596d}
+    .memory{margin-top:18px;border-radius:16px;padding:14px 17px;background:var(--navy);color:#fff;font-size:21px;line-height:1.38}
+    .memory b{color:#ffd46b}
+    .dense .term{padding:9px 0 8px}
+    .dense .chapter-head{margin-bottom:14px}
+    .dense .core{margin-bottom:12px;padding-top:12px;padding-bottom:12px}
+    .dense.four-col .micro-grid{grid-template-columns:repeat(4,1fr)}
+    .mini-head{margin:14px 0 6px;font:700 19px PlexMono,monospace;letter-spacing:.07em;color:var(--c)}
+    .micro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px 9px}
+    .micro{min-height:58px;padding:8px 10px;border-radius:11px;background:color-mix(in srgb,var(--c) 8%,#fff);border:1px solid color-mix(in srgb,var(--c) 24%,#fff);font-size:19px;line-height:1.22;color:#4d596d}
+    .micro b{display:block;color:var(--ink);font-size:19.5px}
+    .micro em{font-style:normal;color:var(--c);font-weight:600}
+    .thinkers{margin-top:10px;padding:10px 13px;border-radius:12px;background:#eef1f5;font-size:19.5px;line-height:1.3;color:#46536a}
+    .thinkers b{color:var(--c)}
+    .casebox{margin-top:10px;padding:11px 14px;border-radius:13px;border:2px dashed color-mix(in srgb,var(--c) 50%,#fff);background:color-mix(in srgb,var(--c) 6%,#fff);font-size:19.5px;line-height:1.32;color:#46536a}
+    .casebox b{color:var(--c)}
+    .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+    .flow i{font-style:normal;padding:7px 11px;border-radius:10px;background:#ffffff18;border:1px solid #ffffff33;font-size:18px}
+    .flow strong{color:#ffcf62}
+    .footer{position:absolute;left:90px;right:90px;bottom:38px;display:flex;justify-content:space-between;align-items:center;padding-top:18px;border-top:2px solid #cbd2db;color:#637086;font-size:18px}
+    .footer b{font:600 18px PlexMono,monospace;color:var(--accent)}
+    .legend{display:flex;gap:18px;align-items:center}
+    .legend span{display:flex;gap:7px;align-items:center}
+    .legend i{width:12px;height:12px;border-radius:50%;background:var(--accent)}
+    .accent{color:var(--c);font-weight:700}
+  </style>
+</head>
+<body>
+
+<main class="poster dti" id="dti286">
+  <header class="top">
+    <div>
+      <div class="eyebrow">DTI286 · MEMORY POSTER · 4 CHAPTERS</div>
+      <h1>โหมดของประสบการณ์มนุษย์</h1>
+      <p class="subtitle">คำศัพท์อังกฤษ · คำแปลไทย · ความหมายที่ต้องใช้วิเคราะห์โจทย์<br>จำแก่นให้ได้ แล้วตอบเป็นลำดับ “เหตุการณ์ → โหมด → แนวคิด → กลไก → วิธีออกแบบ”</p>
+    </div>
+    <div class="exam-chip"><b>CLOSED BOOK</b><span>ท่องให้เรียกคืนได้เอง</span></div>
+  </header>
+  <nav class="map"><span class="map-label">COURSE MAP</span><span class="map-node"><i>1</i>พื้นฐาน</span><span class="map-arrow">→</span><span class="map-node"><i>2</i>กายภาพ</span><span class="map-arrow">→</span><span class="map-node"><i>3</i>ปัญญา</span><span class="map-arrow">→</span><span class="map-node"><i>4</i>สังคม</span></nav>
+  <section class="cards">
+    <article class="chapter" style="--c:#0d8175">
+      <div class="chapter-head"><div class="num">01</div><div><div class="chapter-kicker">FOUNDATION</div><h2>พื้นฐาน · ประสบการณ์และ HCD</h2></div></div>
+      <div class="core"><b>แก่น:</b> ออกแบบ “ประสบการณ์ทั้งหมด” โดยเริ่มจาก <b>Why → What → How</b> และใช้ 5 โหมดเป็นเลนส์วิเคราะห์</div>
+      <div class="terms">
+        <div class="term"><b>Human Experience</b><em>ประสบการณ์มนุษย์</em> <span>ผลรวมการรับรู้ ความคิด ความรู้สึก และการกระทำในบริบทจริง</span></div>
+        <div class="term"><b>5 Modes</b><em>5 โหมด</em> <span>กายภาพ · ปัญญา · สังคม · วัฒนธรรม · อารมณ์ ทำงานร่วมกันเสมอ</span></div>
+        <div class="term"><b>an experience</b><em>ประสบการณ์หนึ่ง ๆ</em> <span>Dewey: มีจุดเริ่ม–พัฒนา–จุดสมบูรณ์ชัดเจน</span></div>
+        <div class="term"><b>HCD · Human-Centered Design</b><em>ออกแบบโดยยึดมนุษย์</em> <span>เริ่มจากความต้องการและความสามารถของผู้ใช้</span></div>
+        <div class="term"><b>Affordance ↔ Signifier</b><em>ทำอะไรได้ ↔ ทำตรงไหน/อย่างไร</em> <span>อย่าสับสน “โอกาสกระทำ” กับ “ตัวบ่งชี้”</span></div>
+        <div class="term"><b>Mapping · Feedback · Constraint</b><em>การจับคู่ · ผลป้อนกลับ · ข้อจำกัด</em> <span>ช่วยให้ทำถูก เข้าใจผล และลดความผิดพลาด</span></div>
+        <div class="term"><b>Mental ↔ Conceptual model</b><em>แบบจำลองในใจ ↔ แบบที่ผู้ออกแบบสื่อ</em> <span>ควรสอดคล้องกัน</span></div>
+        <div class="term"><b>Gulf of execution ↔ evaluation</b><em>ช่องว่างลงมือ ↔ ประเมินผล</em> <span>ไม่รู้จะทำอย่างไร ↔ ไม่รู้ว่าเกิดอะไรขึ้น</span></div>
+        <div class="term"><b>Slip ↔ Mistake</b><em>ตั้งใจถูกแต่ทำผิด ↔ แผนผิดตั้งแต่ต้น</em> <span>แก้ด้วย constraint/undo ↔ ข้อมูลและ model ที่ชัด</span></div>
+        <div class="term"><b>Double Diamond</b><em>กระบวนการเพชรคู่</em> <span>Discover → Define → Develop → Deliver</span></div>
+        <div class="term"><b>13 Fundamental Needs</b><em>ความต้องการพื้นฐาน 13 ข้อ</em> <span>เข็มทิศออกแบบ ไม่ได้เรียงเป็นลำดับขั้นแบบ Maslow</span></div>
+        <div class="term"><b>Humanity-Centered Design</b><em>ออกแบบเพื่อมนุษยชาติ</em> <span>มองระบบ สังคม ผู้ได้รับผลกระทบ ความยั่งยืน และผลระยะยาว</span></div>
+      </div>
+      <div class="memory"><b>จำ 7 stages:</b><div class="flow"><i>เป้าหมาย</i><strong>→</strong><i>วางแผน</i><strong>→</strong><i>กำหนด</i><strong>→</strong><i>ลงมือ</i><strong>→</strong><i>รับรู้</i><strong>→</strong><i>ตีความ</i><strong>→</strong><i>เทียบเป้าหมาย</i></div></div>
+    </article>
+
+    <article class="chapter" style="--c:#138fb0">
+      <div class="chapter-head"><div class="num">02</div><div><div class="chapter-kicker">PHYSICAL MODE</div><h2>กายภาพ · ร่างกายและการยศาสตร์</h2></div></div>
+      <div class="core"><b>แก่น:</b> มนุษย์รับรู้และให้ความหมายผ่านร่างกายก่อนคิดเป็นคำพูด — “ปรับงานให้เข้ากับคน”</div>
+      <div class="terms">
+        <div class="term"><b>Embodiment</b><em>ความเป็นกาย</em> <span>ความคิดและความหมายมีรากจากร่างกายที่ปฏิสัมพันธ์กับโลก</span></div>
+        <div class="term"><b>Lived body · Pre-reflective</b><em>ร่างกายที่มีชีวิต · ก่อนสำนึก</em> <span>ร่างกาย “รู้ว่าจะทำ” ก่อนวิเคราะห์</span></div>
+        <div class="term"><b>Body schema ↔ Body image</b><em>ระบบท่าทางอัตโนมัติ ↔ ภาพร่างกายแบบรู้ตัว</em></div>
+        <div class="term"><b>Proprioception</b><em>การรับรู้อากัปกิริยา</em> <span>รู้ตำแหน่ง การเคลื่อนไหว และแรงของร่างกายโดยไม่ต้องมอง</span></div>
+        <div class="term"><b>Ergonomics / Human factors</b><em>การยศาสตร์</em> <span>ออกแบบงาน เครื่องมือ และสภาพแวดล้อมให้เข้ากับคน</span></div>
+        <div class="term"><b>Anthropometrics</b><em>มานุษยมิติ</em> <span>ข้อมูลขนาดและสัดส่วนร่างกายสำหรับการออกแบบ</span></div>
+        <div class="term"><b>Reach ↔ Clearance</b><em>ระยะเอื้อม ↔ พื้นที่ว่าง</em> <span>Reach ใช้ 5th percentile; Clearance ใช้ 95th percentile</span></div>
+        <div class="term"><b>Fitts’s Law</b><em>กฎการเคลื่อนไปยังเป้าหมาย</em> <span>เป้าหมายใหญ่และใกล้ → เร็วและแม่นกว่า</span></div>
+        <div class="term"><b>Multisensory perception</b><em>การรับรู้หลากประสาทสัมผัส</em> <span>ภาพ เสียง กลิ่น สัมผัส และการทรงตัวร่วมสร้างประสบการณ์</span></div>
+        <div class="term"><b>Universal / Inclusive Design</b><em>การออกแบบเพื่อทุกคน</em> <span>รองรับความหลากหลายตั้งแต่ต้น ไม่เพิ่มทีหลัง</span></div>
+      </div>
+      <div class="memory"><b>คู่จำ:</b> Affordance = ทำอะไรได้ · Signifier = ทำตรงไหน/อย่างไร · False affordance = ดูเหมือนทำได้แต่ทำไม่ได้จริง</div>
+    </article>
+
+    <article class="chapter dense" style="--c:#7158a6">
+      <div class="chapter-head"><div class="num">03</div><div><div class="chapter-kicker">COGNITIVE MODE</div><h2>ปัญญา · รับรู้ จำ และตัดสินใจ</h2></div></div>
+      <div class="core"><b>แก่น:</b> ทรัพยากรทางปัญญามีจำกัด จึงต้องลดภาระความจำ จัดกลุ่มให้เห็น และไม่บังคับให้ผู้ใช้คิดเกินจำเป็น</div>
+      <div class="terms">
+        <div class="term"><b>Perception · Bottom-up ↔ Top-down</b><em>การรับรู้: ข้อมูลนำ ↔ ความรู้เดิมนำ</em> <span>สมองแปลสิ่งเร้าด้วยสองทิศทางร่วมกัน</span></div>
+        <div class="term"><b>Gestalt Principles</b><em>หลักเกสตัลต์</em> <span>proximity · similarity · continuity · closure · figure-ground · common region · connectedness</span></div>
+        <div class="term"><b>Cognitive load · 3 types</b><em>Intrinsic · Extraneous · Germane</em> <span>ความยากของงาน · ภาระจากการนำเสนอที่ไม่ดี (ควรลด) · ภาระที่ช่วยสร้างการเรียนรู้</span></div>
+        <div class="term"><b>Working memory · Recognition ↔ Recall</b><em>7±2 หน่วย · เห็นแล้วจำได้ ↔ นึกเอง</em> <span>Recognition ง่ายกว่า; ใช้ chunking</span></div>
+        <div class="term"><b>Progressive disclosure</b><em>เปิดเผยตามลำดับ</em> <span>แสดงเท่าที่จำเป็นก่อน ลด cognitive load</span></div>
+        <div class="term"><b>Preattentive features</b><em>คุณลักษณะก่อนการตั้งใจ</em> <span>สี ขนาด ทิศทาง ตำแหน่ง การเคลื่อนไหว “กระโดดเข้าตา” ทันที</span></div>
+        <div class="term"><b>Data-ink ↔ Chartjunk · Tufte</b><em>หมึกที่สื่อข้อมูล ↔ ขยะกราฟ</em> <span>เพิ่มส่วนที่ให้ข้อมูลจริง ตัดเงา 3D/ลวดลายที่ไม่ช่วยอ่าน</span></div>
+        <div class="term"><b>Hick’s Law ↔ Fitts’s Law</b><em>เลือกเป้าหมาย ↔ ไปหาเป้าหมาย</em> <span>ตัวเลือกมากช้า ↔ ไกล/เล็กช้า</span></div>
+        <div class="term"><b>System 1 ↔ System 2</b><em>เร็ว/อัตโนมัติ ↔ ช้า/ใช้เหตุผล</em> <span>ระบบ 1 ประหยัดแรงแต่ไวต่ออคติ</span></div>
+        <div class="term"><b>Mental ↔ Conceptual model</b><em>ผู้ใช้เข้าใจ ↔ ระบบสื่อออกมา</em> <span>ไม่ตรงกันทำให้ mistake; dark pattern จงใจบิด model เพื่อหลอก</span></div>
+        <div class="term"><b>Nudge ↔ Dark pattern</b><em>สะกิดเพื่อช่วย ↔ ออกแบบเพื่อหลอก</em> <span>ต่างกันที่ความโปร่งใส ทางเลือก และประโยชน์ของผู้ใช้</span></div>
+      </div>
+      <div class="mini-head">COGNITIVE BIASES · อคติพร้อมตัวอย่าง</div>
+      <div class="micro-grid">
+        <div class="micro"><b>Anchoring</b><em>ยึดค่าแรก</em> ราคาเดิม 999 ทำให้ 599 ดูถูก</div>
+        <div class="micro"><b>Availability</b><em>นึกง่าย=คิดว่าเกิดบ่อย</em> เห็นข่าวเครื่องบินตกแล้วกลัวเกินจริง</div>
+        <div class="micro"><b>Framing</b><em>กรอบเปลี่ยนคำตอบ</em> “รอด 90%” ฟังดีกว่า “ตาย 10%”</div>
+        <div class="micro"><b>Loss aversion</b><em>เสียเจ็บกว่าได้</em> กลัวเสีย 100 มากกว่าดีใจได้ 100</div>
+        <div class="micro"><b>Confirmation</b><em>หาแต่สิ่งที่เชื่อ</em> อ่านเฉพาะรีวิวที่สนับสนุนตัวเอง</div>
+        <div class="micro"><b>Sunk cost</b><em>ลงทุนแล้วจึงฝืนต่อ</em> ดูหนังต่อทั้งที่ไม่ชอบเพราะซื้อบัตรแล้ว</div>
+      </div>
+      <div class="thinkers"><b>นักคิดต้องจับคู่:</b> Miller = 7±2 · Hick = ตัวเลือกมากเลือกช้า · Tufte = data-ink/chartjunk · Kahneman = System 1/2 และอคติ</div>
+    </article>
+
+    <article class="chapter dense four-col" style="--c:#e85d4a">
+      <div class="chapter-head"><div class="num">04</div><div><div class="chapter-kicker">SOCIAL MODE</div><h2>สังคม · ตัวตน บรรทัดฐาน พฤติกรรม</h2></div></div>
+      <div class="core"><b>แก่น:</b> พฤติกรรมเกิดในบริบทของบทบาท ผู้อื่น บรรทัดฐาน และแรงจูงใจ การออกแบบจึงมีอำนาจและความรับผิดชอบ</div>
+      <div class="terms">
+        <div class="term"><b>Dramaturgy · Goffman</b><em>Front ↔ Back stage</em> <span>หน้าเวทีรักษาภาพลักษณ์; หลังเวทีพักบทบาท—ทั้งหมดคือ impression management</span></div>
+        <div class="term"><b>Situated action · Suchman</b><em>การกระทำตามสถานการณ์</em> <span>แผนปรับเปลี่ยนได้ตามบริบทจริง</span></div>
+        <div class="term"><b>Media Equation · CASA</b><em>มนุษย์ตอบสนองสื่อเหมือนตัวแสดงทางสังคม</em> <span>แม้รู้ว่าเป็นเครื่อง</span></div>
+        <div class="term"><b>Descriptive ↔ Injunctive norm</b><em>คนส่วนใหญ่ทำ ↔ สังคมเห็นว่าควรทำ</em></div>
+        <div class="term"><b>Fogg Behavior Model</b><em>B = MAP</em> <span>Behavior เกิดเมื่อ Motivation + Ability + Prompt มาพร้อมกัน</span></div>
+        <div class="term"><b>Co-design · Value-sensitive design</b><em>ร่วมออกแบบ · คำนึงถึงคุณค่า</em> <span>ผู้ได้รับผลกระทบร่วมตัดสินใจ; ตรวจประโยชน์ อำนาจ และทางเลือก</span></div>
+      </div>
+      <div class="mini-head">CIALDINI · 7 หลักพร้อมตัวอย่าง</div>
+      <div class="micro-grid">
+        <div class="micro"><b>1 Reciprocity</b><em>ตอบแทน</em> ให้ตัวอย่างฟรีก่อน</div>
+        <div class="micro"><b>2 Commitment</b><em>ยึดมั่น/สม่ำเสมอ</em> เริ่มจากคำมั่นเล็ก ๆ</div>
+        <div class="micro"><b>3 Social proof</b><em>ทำตามคนส่วนใหญ่</em> รีวิว/ยอดผู้ใช้</div>
+        <div class="micro"><b>4 Authority</b><em>เชื่อผู้เชี่ยวชาญ</em> ตรารับรองจากแพทย์</div>
+        <div class="micro"><b>5 Liking</b><em>คล้อยตามคนที่ชอบ</em> ความคล้าย/คำชม</div>
+        <div class="micro"><b>6 Scarcity</b><em>อยากได้ของจำกัด</em> เหลือน้อย/เวลาจำกัด</div>
+        <div class="micro"><b>7 Unity</b><em>เชื่อ “พวกเรา”</em> ชุมชนที่มีอัตลักษณ์ร่วม</div>
+        <div class="micro"><b>จำเรียง</b><em>ให้–ยึด–ตาม–เชื่อ–ชอบ–น้อย–พวก</em></div>
+      </div>
+      <div class="casebox"><b>Dark patterns:</b> <strong>Fake urgency</strong> = “เหลือ 1 ที่” ทั้งที่ขึ้นซ้ำทุกครั้ง · <strong>Confirmshaming</strong> = ปุ่มปฏิเสธเขียนให้รู้สึกผิด เช่น “ไม่ ฉันไม่อยากประหยัด”</div>
+      <div class="thinkers"><b>นักคิดต้องจับคู่:</b> Goffman = dramaturgy · Suchman = situated action · Reeves & Nass = Media Equation/CASA · Cialdini = persuasion · Fogg = B=MAP · Hall = proxemics/ระยะห่างระหว่างบุคคล</div>
+      <div class="casebox"><b>กรณีระบบคิวโรงพยาบาล:</b> วิเคราะห์ front/back stage ของพนักงาน → situated action เมื่อระบบล่ม → descriptive/injunctive norm ของการต่อคิว → แสดงลำดับคิวอย่างโปร่งใสเพื่อลดความหงุดหงิด</div>
+    </article>
+  </section>
+  <footer class="footer"><span>สรุปจากเนื้อหา TutorHub และเอกสารรายวิชา DTI286 · ใช้ทบทวนคู่กับเนื้อหาเต็ม</span><b>THANAT · TUTORHUB · 2026</b></footer>
+</main>
+
+<main class="poster pb" id="pb287">
+  <header class="top">
+    <div>
+      <div class="eyebrow">PB287 · MEMORY POSTER · 6 PARTS</div>
+      <h1>การเตรียมความพร้อมและตอบโต้ภัยพิบัติ</h1>
+      <p class="subtitle">คำนิยามที่ต้องแยก · กรอบที่ต้องเทียบ · ตัวย่อครบชื่อเต็มและการใช้งาน<br>จำเป็นระบบ: ความเสี่ยง → กฎหมาย → สุขภาพ → วงจร → บัญชาการ → สิ่งแวดล้อม</p>
+    </div>
+    <div class="exam-chip"><b>70 QUESTIONS</b><span>ข้อสอบปรนัย · ปิดหนังสือ</span></div>
+  </header>
+  <nav class="map"><span class="map-label">COURSE MAP</span><span class="map-node"><i>1</i>ความเสี่ยง</span><span class="map-arrow">→</span><span class="map-node"><i>2</i>กฎหมาย</span><span class="map-arrow">→</span><span class="map-node"><i>3</i>สุขภาพ</span><span class="map-arrow">→</span><span class="map-node"><i>4</i>วงจร</span><span class="map-arrow">→</span><span class="map-node"><i>5</i>บัญชาการ</span><span class="map-arrow">→</span><span class="map-node"><i>6</i>สิ่งแวดล้อม</span></nav>
+  <section class="cards">
+
+    <article class="chapter dense" style="--c:#d75244">
+      <div class="chapter-head"><div class="num">W1</div><div><div class="chapter-kicker">RISK FOUNDATION</div><h2>ภัย · ความเสี่ยง · ผลกระทบ</h2></div></div>
+      <div class="core"><b>แก่น:</b> Hazard เป็นเพียงสิ่งที่ “อาจ” ก่ออันตราย; Disaster เกิดเมื่อภัยปฏิสัมพันธ์กับ Exposure และ Vulnerability จนระบบชุมชนหยุดชะงักรุนแรง</div>
+      <div class="terms">
+        <div class="term"><b>Hazard</b><em>ภัย / สิ่งคุกคาม</em> <span>เหตุหรือกระบวนการที่มีศักยภาพก่อความเสียหาย แต่ยังไม่จำเป็นต้องเกิดความสูญเสีย</span></div>
+        <div class="term"><b>Disaster</b><em>ภัยพิบัติ</em> <span>ความเสียหายรุนแรงที่เกิดขึ้นจริงและอาจเกินขีดความสามารถปกติของชุมชน</span></div>
+        <div class="term"><b>Public Disaster</b><em>สาธารณภัยตามกฎหมายไทย</em> <span>ภัยจากธรรมชาติ มนุษย์ อุบัติเหตุ หรือเหตุอื่นที่กระทบสาธารณชน รวมภัยทางอากาศและการก่อวินาศกรรม</span></div>
+        <div class="term"><b>Exposure</b><em>ความล่อแหลม / การรับสัมผัส</em> <span>คน ทรัพย์สิน โครงสร้าง หรือระบบที่ตั้งอยู่ในพื้นที่ภัย</span></div>
+        <div class="term"><b>Vulnerability</b><em>ความเปราะบาง</em> <span>ปัจจัยกายภาพ สังคม เศรษฐกิจ หรือสิ่งแวดล้อมที่ทำให้เสียหายง่าย</span></div>
+        <div class="term"><b>Capacity</b><em>ขีดความสามารถ</em> <span>ความรู้ ทรัพยากร เครือข่าย และระบบที่ช่วยรับมือและฟื้นตัว</span></div>
+        <div class="term"><b>Natural · Manmade/Technological · Complex</b><em>ภัยธรรมชาติ · ภัยมนุษย์/เทคโนโลยี · ภัยซ้อน</em> <span>ใช้จำแนกที่มาและการเชื่อมต่อของภัย</span></div>
+        <div class="term"><b>Impacts</b><em>ผลกระทบ 3 มิติ</em> <span>กายภาพ: ตาย/เจ็บ/อาคาร · สังคม: เครียด/ย้ายถิ่น · เศรษฐกิจ: รายได้/การลงทุนลด</span></div>
+        <div class="term"><b>Risk assessment · 3 approaches</b><em>วิธีประเมินความเสี่ยง</em> <span>Probabilistic · Scenario/Risk matrix · Index-based</span></div>
+        <div class="term"><b>INFORM · Index for Risk Management</b><em>ดัชนีเพื่อการจัดการความเสี่ยง</em> <span>รวม Hazard &amp; Exposure, Vulnerability และ Lack of Coping Capacity เพื่อเปรียบเทียบและจัดลำดับพื้นที่</span></div>
+        <div class="term"><b>UNDRR · United Nations Office for Disaster Risk Reduction</b><em>สำนักงานสหประชาชาติด้านการลดความเสี่ยงจากภัยพิบัติ</em> <span>ใช้ประสานและสนับสนุนประเทศให้เปลี่ยนจากจัดการภัยไปสู่จัดการความเสี่ยง</span></div>
+        <div class="term"><b>Risk drivers</b><em>ตัวขับความเสี่ยง</em> <span>ภูมิอากาศเสื่อม ระบบนิเวศเสื่อม ความยากจน/เหลื่อมล้ำ เมืองวางแผนไม่ดี เศรษฐกิจโลก และธรรมาภิบาลอ่อนแอ</span></div>
+      </div>
+      <div class="mini-head">6 การเปลี่ยนแปลงเมื่อเกิดภัย</div>
+      <div class="micro-grid"><div class="micro"><b>Uncertainty</b>ไม่แน่นอน</div><div class="micro"><b>Urgency</b>เร่งด่วน</div><div class="micro"><b>Emergency consensus</b>ร่วมมือเฉพาะกิจ</div><div class="micro"><b>Citizen role</b>ประชาชนมีบทบาทเพิ่ม</div><div class="micro"><b>Contracts relax</b>ความสัมพันธ์ทางการผ่อนคลาย</div><div class="micro"><b>Convergence</b>คน/ข่าว/ของหลั่งไหล</div></div>
+      <div class="memory"><b>ภาพจำ:</b> Hazard = สิ่งที่อาจก่ออันตราย; Disaster = ความเสียหายที่เกิดจริง · Risk สูงเมื่อ Hazard × Exposure × Vulnerability สูง และ Capacity ต่ำ · ลดความเสี่ยงได้ทั้งลดภัย ลดการรับสัมผัส ลดความเปราะบาง หรือเพิ่มขีดความสามารถ</div>
+    </article>
+
+    <article class="chapter dense" style="--c:#b57b19">
+      <div class="chapter-head"><div class="num">W2</div><div><div class="chapter-kicker">LAW &amp; GOVERNANCE</div><h2>กฎหมาย · แผน · Sendai</h2></div></div>
+      <div class="core"><b>แก่น:</b> กฎหมายให้ฐานอำนาจ · กปภ.ช.กำหนดนโยบาย · ปภ.เป็นหน่วยกลาง · แผนพื้นที่ต้องสอดคล้องกับแผนแห่งชาติ</div>
+      <div class="terms">
+        <div class="term"><b>Disaster Prevention and Mitigation Act, Buddhist Era 2550</b><em>พ.ร.บ.ป้องกันและบรรเทาสาธารณภัย พ.ศ. 2550</em> <span>กฎหมายหลักกำหนดอำนาจ โครงสร้าง เจ้าหน้าที่ อาสาสมัคร และแผน</span></div>
+        <div class="term"><b>กปภ.ช. · National Disaster Prevention and Mitigation Committee</b><em>คณะกรรมการป้องกันและบรรเทาสาธารณภัยแห่งชาติ</em> <span>กำหนดนโยบาย เห็นชอบแผน และบูรณาการทุกภาคส่วนในระดับชาติ</span></div>
+        <div class="term"><b>DDPM · Department of Disaster Prevention and Mitigation</b><em>กรมป้องกันและบรรเทาสาธารณภัย</em> <span>หน่วยกลางจัดทำแผน ประสาน สนับสนุน สงเคราะห์ และติดตามผล</span></div>
+        <div class="term"><b>NDRMP · National Disaster Risk Management Plan</b><em>แผนการป้องกันและบรรเทาสาธารณภัยแห่งชาติ</em> <span>แผนแม่บทที่กำกับแผนจังหวัดและกรุงเทพมหานคร</span></div>
+        <div class="term"><b>SDGs · Sustainable Development Goals</b><em>เป้าหมายการพัฒนาที่ยั่งยืน</em> <span>ใช้เชื่อมการลดความเสี่ยงกับสุขภาพ น้ำ เมือง ความเท่าเทียม และการพัฒนา</span></div>
+        <div class="term"><b>SFDRR · Sendai Framework for Disaster Risk Reduction</b><em>กรอบเซนไดเพื่อการลดความเสี่ยงจากภัยพิบัติ</em> <span>กรอบโลก 2015–2030 ใช้กำหนด 7 เป้าหมายและ 4 ลำดับการปฏิบัติ</span></div>
+        <div class="term"><b>EcoDRR · Ecosystem-based Disaster Risk Reduction</b><em>การลดความเสี่ยงโดยอาศัยระบบนิเวศ</em> <span>ใช้ป่า พื้นที่ชุ่มน้ำ และพืชยึดตลิ่งเพื่อลดภัยพร้อมรักษาระบบนิเวศ</span></div>
+        <div class="term"><b>BCP · Business Continuity Plan</b><em>แผนความต่อเนื่องทางธุรกิจ</em> <span>ใช้คงบริการสำคัญหรือกลับมาดำเนินงานเมื่อระบบหลักหยุดชะงัก</span></div>
+        <div class="term"><b>MHEWS · Multi-Hazard Early Warning Systems</b><em>ระบบเตือนภัยล่วงหน้าหลายภัย</em> <span>ใช้ตรวจจับ คาดการณ์ และส่งคำเตือนที่นำไปปฏิบัติได้</span></div>
+        <div class="term"><b>CBDRM · Community-Based Disaster Risk Management</b><em>การจัดการความเสี่ยงโดยชุมชนเป็นฐาน</em> <span>ใช้ให้ชุมชนร่วมประเมิน วางแผน ตัดสินใจ และเป็นเจ้าของมาตรการ</span></div>
+        <div class="term"><b>EOC · Emergency Operations Center</b><em>ศูนย์ปฏิบัติการฉุกเฉิน</em> <span>ใช้รวมข้อมูล อำนวยการ ประสาน และสนับสนุนการตอบโต้หลายหน่วย</span></div>
+      </div>
+      <div class="mini-head">Sendai · 7 Global Targets</div>
+      <div class="micro-grid"><div class="micro"><b>A</b>ลดผู้เสียชีวิต</div><div class="micro"><b>B</b>ลดผู้ได้รับผล</div><div class="micro"><b>C</b>ลดความเสียหายเศรษฐกิจ</div><div class="micro"><b>D</b>ลดความเสียหายโครงสร้าง/บริการ</div><div class="micro"><b>E</b>เพิ่มยุทธศาสตร์ระดับชาติ/ท้องถิ่น</div><div class="micro"><b>F</b>เพิ่มความร่วมมือระหว่างประเทศ</div><div class="micro"><b>G</b>เพิ่มเตือนภัย/ข้อมูลความเสี่ยง</div><div class="micro"><b>แผน 3 ระดับ</b>ชาติ · จังหวัด · กรุงเทพฯ</div><div class="micro"><b>4 Priorities</b>เข้าใจ → ธรรมาภิบาล → ลงทุน → เตรียม/ฟื้นดีกว่าเดิม</div></div>
+    </article>
+
+    <article class="chapter dense" style="--c:#7c589f">
+      <div class="chapter-head"><div class="num">W3</div><div><div class="chapter-kicker">PUBLIC HEALTH EMERGENCY</div><h2>ระดับเหตุ · PHEM · ทีมตอบโต้</h2></div></div>
+      <div class="core"><b>แก่น:</b> Incident → Emergency → Disaster แสดงการยกระดับผลกระทบ; Public Health Emergency เน้นความเสี่ยงสุขภาพและการตอบสนองเร่งด่วนหลายหน่วย</div>
+      <div class="terms">
+        <div class="term"><b>Incident</b><em>เหตุการณ์</em> <span>เหตุผิดปกติที่ต้องติดตามหรือจัดการ แต่ยังไม่จำเป็นต้องเป็นเหตุฉุกเฉิน</span></div>
+        <div class="term"><b>Emergency</b><em>เหตุฉุกเฉิน</em> <span>ต้องดำเนินการเร่งด่วนเพื่อลดการสูญเสีย และอาจยังใช้ทรัพยากรในพื้นที่ได้</span></div>
+        <div class="term"><b>Disaster</b><em>สาธารณภัย</em> <span>ระบบชุมชนหยุดชะงักรุนแรงและอาจเกินศักยภาพปกติ</span></div>
+        <div class="term"><b>PHE · Public Health Emergency</b><em>ภาวะฉุกเฉินทางสาธารณสุข</em> <span>เหตุสุขภาพที่ผ่านอย่างน้อย 2 ใน 4 เกณฑ์: รุนแรง ผิดปกติ เสี่ยงแพร่ หรืออาจจำกัดการเดินทาง/สินค้า</span></div>
+        <div class="term"><b>PHEM · Public Health Emergency Management</b><em>การจัดการภาวะฉุกเฉินทางสาธารณสุข</em> <span>ใช้จัดการเหตุสุขภาพครบวงจร Prevention/Mitigation–Preparedness–Response–Recovery</span></div>
+        <div class="term"><b>WHO · World Health Organization</b><em>องค์การอนามัยโลก</em> <span>รับการแจ้งเหตุ ประสานประเทศ และพิจารณาประกาศภาวะฉุกเฉินระหว่างประเทศ</span></div>
+        <div class="term"><b>IHR · International Health Regulations</b><em>กฎอนามัยระหว่างประเทศ</em> <span>ใช้ตรวจจับ แจ้งเหตุสำคัญภายใน 24 ชั่วโมง และตอบโต้ข้ามแดนโดยรบกวนการเดินทาง/ค้าน้อยที่สุด</span></div>
+        <div class="term"><b>PHEIC · Public Health Emergency of International Concern</b><em>ภาวะฉุกเฉินสาธารณสุขระหว่างประเทศ</em> <span>ใช้กับเหตุที่เสี่ยงข้ามประเทศและอาจต้องตอบสนองร่วมกัน</span></div>
+        <div class="term"><b>PHEOC · Public Health Emergency Operations Center</b><em>ศูนย์ปฏิบัติการภาวะฉุกเฉินทางสาธารณสุข</em> <span>รวมข้อมูล บัญชาการ และประสานภารกิจสุขภาพเมื่อยกระดับเหตุ</span></div>
+        <div class="term"><b>SAT · Situation Awareness Team</b><em>ทีมตระหนักรู้สถานการณ์</em> <span>เฝ้าระวัง ประเมิน เชื่อมข้อมูล และเสนอเปิด/ปิดศูนย์หรือมาตรการ</span></div>
+        <div class="term"><b>SRRT · Surveillance and Rapid Response Team</b><em>ทีมเฝ้าระวังสอบสวนเคลื่อนที่เร็ว</em> <span>ตรวจจับ สอบสวน และควบคุมโรคขั้นต้นอย่างรวดเร็ว</span></div>
+        <div class="term"><b>JIT · Joint Investigation Team</b><em>ทีมปฏิบัติสอบสวนควบคุมโรคร่วม</em> <span>ใช้ทีมหลายวิชาชีพ/หน่วยงานร่วมสอบสวนและควบคุมเหตุ</span></div>
+        <div class="term"><b>CDCU · Communicable Disease Control Unit</b><em>หน่วยปฏิบัติการควบคุมโรคติดต่อ</em> <span>ใช้สอบสวน ควบคุม และใช้อำนาจตามกฎหมาย เช่น สั่งกักกัน</span></div>
+      </div>
+      <div class="mini-head">5 กลุ่มโรคและภัยสุขภาพ</div>
+      <div class="micro-grid"><div class="micro"><b>โรคติดต่อ</b>ระบาดผิดปกติ</div><div class="micro"><b>บาดเจ็บ</b>อุบัติเหตุ/สงคราม</div><div class="micro"><b>ภัยธรรมชาติ</b>โรคและบริการขาด</div><div class="micro"><b>สารเคมี</b>รั่ว/ปนเปื้อน</div><div class="micro"><b>รังสี/นิวเคลียร์</b>รับสัมผัสอันตราย</div><div class="micro"><b>4C · Command–Control–Communication–Coordination</b><em>บัญชาการ–ควบคุม–สื่อสาร–ประสานงาน</em> ใช้ตรวจความพร้อมการจัดการเหตุ</div></div>
+    </article>
+
+    <article class="chapter dense" style="--c:#138b7b">
+      <div class="chapter-head"><div class="num">W4–5</div><div><div class="chapter-kicker">DISASTER RISK MANAGEMENT CYCLE</div><h2>ลดเสี่ยง · เตรียม · ตอบโต้ · ฟื้นฟู</h2></div></div>
+      <div class="core"><b>แก่น:</b> วงจรเป็น Holistic Approach และอาจคาบเกี่ยวกัน การฟื้นฟูต้องคืนระบบพร้อมลดความเสี่ยงของรอบถัดไป</div>
+      <div class="terms">
+        <div class="term"><b>Prevention / Mitigation</b><em>ป้องกัน / ลดผลกระทบ</em> <span>มาตรการโครงสร้างหรือไม่ใช่โครงสร้างเพื่อลดโอกาสและความรุนแรงก่อนเหตุ</span></div>
+        <div class="term"><b>Preparedness</b><em>การเตรียมพร้อม</em> <span>เตรียมคน แผน การซ้อม ระบบเตือน และทรัพยากรให้ใช้จริงได้</span></div>
+        <div class="term"><b>Response</b><em>การตอบโต้ / เผชิญเหตุ</em> <span>รักษาชีวิต บรรเทาทุกข์ และจำกัดความเสียหายอย่างทันท่วงที</span></div>
+        <div class="term"><b>Recovery</b><em>การฟื้นฟู</em> <span>ฟื้นบริการ วิถีชีวิต เศรษฐกิจ และโครงสร้างให้ปกติหรือปลอดภัยกว่าเดิม</span></div>
+        <div class="term"><b>Watch ↔ Warning</b><em>เฝ้าระวัง ↔ เตือนภัย</em> <span>เงื่อนไขพร้อมแต่ภัยยังไม่เกิด ↔ ภัยเริ่มคุกคาม ต้องปฏิบัติทันที</span></div>
+        <div class="term"><b>Agent-generated demand</b><em>ความต้องการจากตัวภัย</em> <span>สิ่งที่ต้องใช้เพราะภัยโดยตรง เช่น กระสอบทรายหรือศูนย์พักพิง</span></div>
+        <div class="term"><b>Response-generated demand</b><em>ความต้องการจากงานตอบโต้</em> <span>วิธีจัดหา ขนส่ง และสนับสนุนสิ่งที่ภารกิจต้องใช้</span></div>
+        <div class="term"><b>Normalcy-generated demand</b><em>ความต้องการกลับสู่ภาวะปกติ</em> <span>กำจัดซาก ซ่อมบริการ และทำให้ประชาชนกลับไปดำเนินชีวิต</span></div>
+        <div class="term"><b>Mitigation-generated demand</b><em>ความต้องการลดภัยซ้ำ</em> <span>ควบคุมอาคาร ย้ายจากพื้นที่เสี่ยง หรือเพิ่มมาตรการป้องกัน</span></div>
+        <div class="term"><b>Rehabilitation ↔ Reconstruction</b><em>ฟื้นสภาพ ↔ ซ่อมสร้าง</em> <span>คืนหน้าที่/บริการให้ใช้ได้ ↔ สร้างอาคารและระบบกายภาพระยะยาวขึ้นใหม่</span></div>
+        <div class="term"><b>DaNA · Damage and Needs Assessment</b><em>ประเมินความเสียหายและความต้องการ</em> <span>ใช้ดูขนาดเหตุ ความต้องการ ศักยภาพ และสิ่งช่วยเหลือเร่งด่วนเพื่อวางแผนฟื้นฟู</span></div>
+        <div class="term"><b>DaLA · Damage and Loss Assessment</b><em>ประเมินความเสียหายและความสูญเสีย</em> <span>Damage = มูลค่าทดแทนทรัพย์สิน; Loss = กระแสเศรษฐกิจที่หายไป</span></div>
+        <div class="term"><b>PDNA · Post-Disaster Needs Assessment</b><em>ประเมินความต้องการหลังภัยพิบัติ</em> <span>รัฐบาลนำทีมหลายสาขาเพื่อรวมผลกระทบและกำหนดกลยุทธ์ฟื้นฟูรอบด้าน</span></div>
+        <div class="term"><b>BBB · Build Back Better and Safer</b><em>ฟื้นสร้างให้ดีกว่าและปลอดภัยกว่าเดิม</em> <span>ใช้ช่วงฟื้นฟูผนวกการลดความเสี่ยง ไม่สร้างความเปราะบางเดิมกลับมา</span></div>
+      </div>
+      <div class="mini-head">งานปกป้องประชากร</div>
+      <div class="micro-grid"><div class="micro"><b>Evacuation</b>อพยพออกจากภัย</div><div class="micro"><b>Sheltering</b>ที่พักพิงชั่วคราว</div><div class="micro"><b>Mass care</b>น้ำ/อาหาร/สุขภาพ</div><div class="micro"><b>SAR · Search and Rescue</b><em>ค้นหาและช่วยชีวิต</em> ใช้ค้น เข้าถึง และนำผู้ประสบภัยออก</div><div class="micro"><b>Donation/Volunteer</b>จัดของและอาสา</div><div class="micro"><b>Warning/Media</b>สื่อสารเพื่อให้ลงมือ</div></div>
+      <div class="memory"><b>จำเครื่องมือฟื้นฟู:</b> DaNA ถาม “เสียอะไร/ต้องการอะไร” · DaLA ถาม “มูลค่าเท่าไร” · PDNA ถาม “จะฟื้นทั้งระบบอย่างไร”</div>
+    </article>
+
+    <article class="chapter dense" style="--c:#2f6598">
+      <div class="chapter-head"><div class="num">W6</div><div><div class="chapter-kicker">INCIDENT COMMAND</div><h2>ICS · โครงสร้างและพื้นที่ปฏิบัติการ</h2></div></div>
+      <div class="core"><b>แก่น:</b> ICS ใช้ภาษามาตรฐาน โครงสร้างแบบโมดูลาร์ และสายบังคับบัญชาชัด เพื่อให้หลายหน่วยทำงานในเหตุเดียวกัน</div>
+      <div class="terms">
+        <div class="term"><b>ICS · Incident Command System</b><em>ระบบบัญชาการเหตุการณ์</em> <span>ระบบมาตรฐานสำหรับบัญชาการ ควบคุม และประสานในพื้นที่ ใช้ได้กับเหตุทุกประเภท/ขนาด</span></div>
+        <div class="term"><b>Common Terminology</b><em>การใช้คำศัพท์มาตรฐาน</em> <span>ใช้ชื่อ ตำแหน่ง ทรัพยากร และสัญลักษณ์เดียวกันเพื่อลดความเข้าใจผิด</span></div>
+        <div class="term"><b>Modular Organization</b><em>โครงสร้างองค์กรแบบโมดูลาร์</em> <span>ขยายจากบนลงล่างหรือยุบตามภารกิจ ทรัพยากร และความซับซ้อน</span></div>
+        <div class="term"><b>MBO · Management by Objectives</b><em>บริหารโดยยึดวัตถุประสงค์</em> <span>ใช้เรียง Life Safety → Incident Stability → Property Preservation</span></div>
+        <div class="term"><b>IAP · Incident Action Plan</b><em>แผนเผชิญเหตุ</em> <span>แปลงวัตถุประสงค์เป็นยุทธวิธี/ทรัพยากร; เหตุใหญ่หรือซับซ้อนต้องเขียนไว้</span></div>
+        <div class="term"><b>Span of Control</b><em>ช่วงการควบคุม</em> <span>ผู้บังคับบัญชาหนึ่งคนควบคุม 3–7 หน่วย; เหมาะที่สุด 1:5</span></div>
+        <div class="term"><b>IC · Incident Commander</b><em>ผู้บัญชาการเหตุการณ์</em> <span>กำหนดวัตถุประสงค์ ลำดับความสำคัญ อนุมัติแผน และรับผิดชอบภาพรวม</span></div>
+        <div class="term"><b>PIO · Public Information Officer</b><em>เจ้าหน้าที่ประชาสัมพันธ์</em> <span>ใช้ตรวจและเผยแพร่ข้อมูลที่ผู้บัญชาการอนุมัติแก่ประชาชน/สื่อ</span></div>
+        <div class="term"><b>Single ↔ Unified Command</b><em>บัญชาการเดี่ยว ↔ บัญชาการร่วม</em> <span>ผู้บัญชาการคนเดียวเมื่ออำนาจชัด ↔ หลายหน่วยร่วมวัตถุประสงค์/แผนเดียว</span></div>
+        <div class="term"><b>Chain ↔ Unity of Command</b><em>ลำดับอำนาจ ↔ รายงานต่อหัวหน้าคนเดียว</em> <span>ใช้ลดคำสั่งซ้ำ ความขัดแย้ง และความสับสน</span></div>
+        <div class="term"><b>Accountability</b><em>ความรับผิดชอบตรวจสอบได้</em> <span>ลงทะเบียนเข้า–ออก · ทำตามแผน · ติดตามคนและทรัพยากร</span></div>
+      </div>
+      <div class="mini-head">5 ส่วน + 5 พื้นที่สำคัญ</div>
+      <div class="micro-grid"><div class="micro"><b>Command</b>สั่ง/กำหนดเป้าหมาย</div><div class="micro"><b>Operations</b>ลงมือทำ</div><div class="micro"><b>Planning</b>คิด/ทำแผน</div><div class="micro"><b>Logistics</b>จัดหา/สนับสนุน</div><div class="micro"><b>Finance and Administration</b>จ่าย/บันทึก</div><div class="micro"><b>ICP · Incident Command Post</b><em>ศูนย์บัญชาการ ณ จุดเกิดเหตุ</em> ใช้สั่งภาคสนาม; มีหนึ่งแห่ง</div><div class="micro"><b>EOC · Emergency Operations Center</b><em>ศูนย์ปฏิบัติการฉุกเฉิน</em> ใช้อำนวยการ/ประสานระดับองค์กร</div><div class="micro"><b>Staging Area</b>รวมทรัพยากรพร้อมใช้; มีหลายแห่งได้</div><div class="micro"><b>Base</b>ฐานสนับสนุนเจ้าหน้าที่; มีหนึ่งแห่ง</div><div class="micro"><b>Camp</b>อาหาร/พัก/พยาบาลทีม; ไม่ใช่ศูนย์พักพิงประชาชน</div></div>
+    </article>
+
+    <article class="chapter dense" style="--c:#4a8a58">
+      <div class="chapter-head"><div class="num">W7</div><div><div class="chapter-kicker">ENVIRONMENTAL HEALTH</div><h2>อนามัยสิ่งแวดล้อม · SPR · 2P2R</h2></div></div>
+      <div class="core"><b>แก่น:</b> ตัดเส้นทางรับสัมผัส รักษาบริการพื้นฐาน และปกป้องกลุ่มเปราะบาง โดยใช้ข้อมูลที่ดีที่สุดเท่าที่มีและประเมินซ้ำ</div>
+      <div class="terms">
+        <div class="term"><b>EH · Environmental Health</b><em>อนามัยสิ่งแวดล้อม</em> <span>ป้องกัน/ควบคุมปัจจัยกายภาพ เคมี ชีวภาพ และสภาพความเป็นอยู่ก่อนเกิดการเจ็บป่วย</span></div>
+        <div class="term"><b>Crisis → Emergency → Disaster → Public Health Emergency</b><em>วิกฤติ → ฉุกเฉิน → สาธารณภัย → ฉุกเฉินสุขภาพ</em> <span>แยกด้วยความเร่งด่วน การหยุดชะงัก และระดับการประสานสุขภาพ</span></div>
+        <div class="term"><b>SPR · Source–Pathway–Receptor</b><em>แหล่งกำเนิด–เส้นทาง–ผู้รับสัมผัส</em> <span>ใช้วิเคราะห์ว่าจะคุมต้นทาง ปิดทางผ่าน หรือปกป้อง/ย้ายผู้รับ</span></div>
+        <div class="term"><b>2P2R · Prevention–Preparedness–Response–Recovery</b><em>ป้องกัน–เตรียม–ตอบโต้–ฟื้นฟู</em> <span>ใช้จัดงานตามช่วงเวลาของเหตุ ต่างจาก SPR ที่วิเคราะห์เส้นทางรับสัมผัส</span></div>
+        <div class="term"><b>Vulnerable groups</b><em>กลุ่มเปราะบาง</em> <span>เด็ก ผู้สูงอายุ หญิงตั้งครรภ์ ผู้พิการ ผู้ป่วยเรื้อรัง ผู้มีข้อจำกัดภาษา/การเดินทาง หรือพึ่งยาและไฟฟ้า</span></div>
+        <div class="term"><b>Equity</b><em>ความเป็นธรรม</em> <span>ช่วยตามระดับความเสี่ยงและความจำเป็น ไม่ใช่ให้เท่ากันทุกคน</span></div>
+        <div class="term"><b>Rapid Environmental Health Assessment</b><em>ประเมินอนามัยสิ่งแวดล้อมอย่างรวดเร็ว</em> <span>ถาม เกิดอะไร–ที่ไหน–ใครได้รับผล–รับสัมผัสทางใด–ทำอะไรก่อน เพื่อ “ตัดสินใจ”</span></div>
+        <div class="term"><b>Evacuation ↔ Shelter-in-place</b><em>อพยพ ↔ หลบภัยภายในอาคาร</em> <span>ย้ายออกเมื่อพื้นที่ไม่ปลอดภัย ↔ อยู่ในอาคารและปิดช่องอากาศเมื่อเหมาะกับชนิด/ทิศทางภัย</span></div>
+        <div class="term"><b>PPE · Personal Protective Equipment</b><em>อุปกรณ์ป้องกันส่วนบุคคล</em> <span>ใช้ลดการรับสัมผัสของทีมตามชนิดอันตราย ไม่ใช้แทนการควบคุมพื้นที่</span></div>
+        <div class="term"><b>SOP · Standard Operating Procedure</b><em>ขั้นตอนปฏิบัติงานมาตรฐาน</em> <span>ใช้ให้ทีมตรวจ เก็บตัวอย่าง ควบคุม และรายงานด้วยวิธีเดียวกัน</span></div>
+        <div class="term"><b>GIS · Geographic Information System</b><em>ระบบสารสนเทศภูมิศาสตร์</em> <span>รวมภัย ประชาชน ระบบพื้นฐาน และทรัพยากรบนแผนที่เพื่อเลือกจุดตรวจ/เส้นทาง/กลุ่มช่วยก่อน</span></div>
+        <div class="term"><b>COP · Common Operating Picture</b><em>ภาพสถานการณ์ร่วม</em> <span>ใช้ข้อมูลชุดเดียวให้ทุกหน่วยวางแผน ตัดสินใจ และติดตามมาตรการสอดคล้องกัน</span></div>
+      </div>
+      <div class="mini-head">24 ชั่วโมงแรก + บริการพื้นฐาน</div>
+      <div class="micro-grid"><div class="micro"><b>1 ยืนยัน</b>เกิดอะไร/ที่ไหน</div><div class="micro"><b>2 ประเมิน</b>Source–Pathway–Receptor</div><div class="micro"><b>3 จัดลำดับ</b>รุนแรง–จำนวน–เร่งด่วน–เปราะบาง</div><div class="micro"><b>4 ควบคุม</b>ต้นทาง/ทางผ่าน/ผู้รับ</div><div class="micro"><b>5 รักษาบริการ</b>น้ำ อาหาร ส้วม ขยะ อากาศ พาหะ ที่พักพิง</div><div class="micro"><b>6 สื่อสาร</b>รายงานและประเมินซ้ำ</div></div>
+      <div class="memory"><b>ห้ามสับสน:</b> SPR = “ภัยเดินทางถึงใครอย่างไร” · 2P2R = “ช่วงนี้ต้องทำอะไร” · Shelter-in-place ไม่ใช่ Evacuation</div>
+    </article>
+  </section>
+  <footer class="footer"><span>เรียบเรียงจากไฟล์ต้นฉบับรายวิชา PB287 ของอาจารย์ · คัดเฉพาะแก่นสำหรับข้อสอบปรนัย</span><b>THANAT · TUTORHUB · 2026</b></footer>
+</main>
+
+
+</body>
+</html>
