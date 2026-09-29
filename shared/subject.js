@@ -103,10 +103,10 @@ function render(){
     const SRC={official:['official','📋 แนวข้อสอบอาจารย์'],mock:['mock','🧪 เก็งข้อสอบ (วิเคราะห์)']};
     const sources=[...new Set(pr.map(q=>q.source||'mock'))];
     const srcLabel=s=>(SRC[s]||['mock',s])[1];
-    $('practice').innerHTML=`<h2>แบบฝึกหัด</h2><p class="lead">ทำไปด้วย ติวไปด้วย — ตอบแล้วเฉลยพร้อมคำอธิบายทันที</p><div class="sheet row" style="justify-content:space-between">
+    $('practice').innerHTML=`<h2>แบบฝึกหัด</h2><p class="lead">${esc(d.practiceNote||"ทำไปด้วย ติวไปด้วย — ตอบแล้วเฉลยพร้อมคำอธิบายทันที")}</p><div class="sheet row" style="justify-content:space-between">
       <div class="row">${sources.length>1?`<label>แหล่งข้อสอบ <select id="fs"><option value="">ทั้งหมด</option>${sources.map(s=>`<option value="${esc(s)}">${srcLabel(s)}</option>`).join('')}</select></label>`:''}
       <label>หัวข้อ <select id="ft"></select></label>
-      <button class="btn" id="shuf">สลับลำดับข้อ</button><button class="btn" id="rst">ล้างคำตอบ</button></div><div class="stats"><span class="stat">ถูก <b id="sc">0</b> จาก <b id="sn">0</b> ข้อปรนัยที่ตอบ</span></div></div><div id="qs"></div>`;
+      <button class="btn" id="shuf">สลับลำดับข้อ</button><button class="btn" id="rst">ล้างคำตอบ</button></div><div class="stats"><span class="stat"><span id="scoreLabel">ถูก</span> <b id="sc">0</b> จาก <b id="sn">0</b> ข้อปรนัยที่ตอบ</span></div></div><div id="qs"></div>`;
     let order=pr.map((_,i)=>i);
     const rebuildTopics=()=>{const fs=$('fs')?.value||'';
       const scoped=pr.filter(q=>!fs||(q.source||'mock')===fs);
@@ -115,14 +115,16 @@ function render(){
       ftEl.innerHTML=`<option value="">ทั้งหมด</option>${topics.map(t=>`<option>${esc(t)}</option>`).join('')}`;
       ftEl.value=topics.includes(keep)?keep:'';};
     const draw=()=>{const ans=store.get('ans',{}),ft=$('ft')?.value||'',fs=$('fs')?.value||'';
-      $('qs').innerHTML=order.map(i=>pr[i]).filter(q=>(!fs||(q.source||'mock')===fs)&&(!ft||q.topic===ft)).map((q,k)=>{const a=ans[q.id];
+      $('qs').innerHTML=order.map(i=>pr[i]).filter(q=>(!fs||(q.source||'mock')===fs)&&(!ft||q.topic===ft)).map((q,k)=>{const a=ans[q.id],graded=Number.isInteger(q.answer),letters=q.choiceLabels||(q.source==='official'?'ABCD':'กขคงจฉ'),sheetKey=q.answerSource?.method==='marked-answer';
         const srcChip=sources.length>1?`<span class="chip ${(q.source||'mock')==='official'?'ready':'mid'}" style="margin-left:6px">${srcLabel(q.source||'mock')}</span>`:'';
-        if(q.type==='mcq'){return `<div class="q"><div class="hint">${esc(q.topic||'')}${srcChip}</div><div class="qtext">${k+1}. ${esc(q.q)}</div>${(q.choices||[]).map((c,ci)=>{
-          const cls=a===undefined?'':(ci===q.answer?'right':(ci===a?'wrong':''));return `<button class="choice ${cls}" data-q="${esc(q.id)}" data-c="${ci}" ${a!==undefined?'disabled':''}>${'กขคงจฉ'[ci]||ci+1}. ${esc(c)}</button>`}).join('')}
-          ${a!==undefined?`<div class="explain"><b class="${a===q.answer?'':'hint'}">${a===q.answer?'✔ ถูกต้อง':'✘ ยังไม่ถูก คำตอบคือ '+('กขคงจฉ'[q.answer]||q.answer+1)}</b>${q.explain?' — '+esc(q.explain):''}</div>`:''}</div>`}
+        if(q.type==='mcq'){return `<div class="q" data-question="${esc(q.id)}"><div class="hint">${esc(q.topic||'')}${srcChip}${q.sourceNumber?` · ข้อ ${esc(q.sourceNumber)} ในชีท`:''}</div><div class="qtext">${q.sourceNumber||k+1}. ${esc(q.q)}</div>${q.reviewNote?`<details class="rule review-note"><summary>ข้อควรตรวจสอบจากต้นฉบับ — อ่านก่อนจำเฉลย</summary><p>${esc(q.reviewNote)}</p>${/^https:\/\//.test(q.reviewUrl||'')?`<a href="${esc(q.reviewUrl)}" target="_blank" rel="noopener">แหล่งตรวจสอบประกอบ</a>`:''}</details>`:''}${(q.choices||[]).map((c,ci)=>{
+          const cls=a===undefined||!graded?'':(ci===q.answer?'right':(ci===a?'wrong':''));return `<button class="choice ${cls}" data-q="${esc(q.id)}" data-c="${ci}" ${a!==undefined?'disabled':''}>${esc(letters[ci]||ci+1)}. ${esc(c)}</button>`}).join('')}
+          ${a!==undefined?`<div class="explain"><b class="${a===q.answer?'':'hint'}">${!graded?'บันทึกคำตอบ '+esc(letters[a]||a+1)+' แล้ว · ยังไม่มีเฉลยยืนยัน':a===q.answer?(sheetKey?'✔ ตรงเฉลยในชีท':'✔ ถูกต้อง'):(sheetKey?'ไม่ตรงชีท · ชีทระบุ ':'✘ ยังไม่ถูก คำตอบคือ ')+esc(letters[q.answer]||q.answer+1)}</b>${q.explain?' — '+esc(q.explain):''}${q.reviewNote?`<p class="rule">${esc(q.reviewNote)}</p>`:''}</div>`:''}</div>`}
         return `<div class="q"><div class="hint">${esc(q.topic||'')}${srcChip}</div><div class="qtext">${k+1}. ${esc(q.q)}</div><details data-w="${esc(q.id)}" ${a?'open':''}><summary>เขียนคำตอบบนกระดาษก่อน แล้วกดดูแนวคำตอบพร้อมคำอธิบาย</summary><div>${q.answer||''}</div></details></div>`}).join('')||empty('ข้อในหัวข้อนี้');
-      const mc=pr.filter(q=>(!fs||(q.source||'mock')===fs)&&q.type==='mcq'&&ans[q.id]!==undefined);$('sc').textContent=mc.filter(q=>ans[q.id]===q.answer).length;$('sn').textContent=mc.length;
-      document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const q=pr.find(x=>x.id===b.dataset.q),picked=+b.dataset.c,s=store.get('ans',{});s[b.dataset.q]=picked;store.set('ans',s);window.tutorTrack?.('practice_answer',{subject:id,question_id:b.dataset.q,correct:q?picked===q.answer:false,source:q?.source||'mock'});draw()});
+      const scoped=pr.filter(q=>(!fs||(q.source||'mock')===fs)&&(!ft||q.topic===ft));
+      $('scoreLabel').textContent=scoped.some(q=>q.answerSource?.method==='marked-answer')?'ตรงเฉลย (ชุดอาจารย์เทียบชีท)':'ถูก';
+      const mc=scoped.filter(q=>q.type==='mcq'&&Number.isInteger(q.answer)&&ans[q.id]!==undefined);$('sc').textContent=mc.filter(q=>ans[q.id]===q.answer).length;$('sn').textContent=mc.length;
+      document.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const q=pr.find(x=>x.id===b.dataset.q),picked=+b.dataset.c,s=store.get('ans',{});s[b.dataset.q]=picked;store.set('ans',s);window.tutorTrack?.('practice_answer',{subject:id,question_id:b.dataset.q,correct:q&&Number.isInteger(q.answer)?picked===q.answer:null,source:q?.source||'mock'});draw()});
       document.querySelectorAll('[data-w]').forEach(x=>x.ontoggle=()=>{if(x.open){const s=store.get('ans',{});s[x.dataset.w]='seen';store.set('ans',s)}})};
     rebuildTopics();
     $('ft').onchange=draw;
