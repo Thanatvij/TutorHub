@@ -4,6 +4,15 @@
    custom: ใส่ path ถ้าวิชานั้นมีหน้าเว็บเฉพาะของตัวเอง (เช่น DTI232 ที่มีเครื่องมือ interactive) */
 window.SUBJECTS = [
   {
+    id: "fof",
+    code: "FOF",
+    name: "Foundations of Finance (พื้นฐานการเงิน)",
+    exam: "ยังไม่มีประกาศวันสอบ · เนื้อหา 4 บท",
+    status: "ready",
+    predictLabel: "คำศัพท์",
+    tabs: { overview: "#overview", study: "#study", practice: "#practice", predict: "#vocab" }
+  },
+  {
     id: "om3207",
     code: "3207",
     name: "Organization and Management (พฤติกรรมองค์การและการจัดการ)",
