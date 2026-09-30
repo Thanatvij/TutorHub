@@ -339,5 +339,6 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s&&s.length===cols.
 cols.forEach(c=>c.addEventListener('input',save));
 document.fonts.ready.then(()=>{let saved=null;try{saved=localStorage.getItem(KEY+'-fs')}catch(e){}if(!saved)autofit();else check()});
 </script>
+<script>window.TUTOR_NO_FOOTER=true;</script>
 <script src="../shared/site-services.js"></script>
 </body></html>

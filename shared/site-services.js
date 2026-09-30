@@ -91,7 +91,24 @@
     };
   }
 
+  function addFooter(){
+    if(window.TUTOR_NO_FOOTER) return;
+    const footer=document.createElement('footer');
+    footer.className='site-footer';
+    footer.innerHTML=`<div class="site-footer-in">
+      <span class="hint">ทำโดย Thanatvij</span>
+      <nav class="site-footer-links" aria-label="ช่องทางติดต่อผู้พัฒนา">
+        <a href="https://thanatvij.github.io/" target="_blank" rel="noopener">Portfolio</a>
+        <a href="https://github.com/Thanatvij" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.instagram.com/thanxt.v/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.linkedin.com/in/thanat34423" target="_blank" rel="noopener">LinkedIn</a>
+      </nav>
+    </div>`;
+    document.body.appendChild(footer);
+  }
+
   window.tutorTrack=function(name,params){if(window.gtag) gtag('event',name,params||{})};
 
   addFeedback();
+  addFooter();
 })();
