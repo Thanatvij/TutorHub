@@ -55,7 +55,7 @@ g.innerHTML=(window.SUBJECTS||[]).map(s=>{
     <div class="meta">สอบ: ${s.exam?esc(s.exam):'ยังไม่ระบุ'}</div>
     <a class="btn main open" href="${base}${t.overview}">เปิดวิชานี้</a>
     <nav class="feat" aria-label="ส่วนของ ${esc(s.code)}">
-      <a href="${base}${t.overview}">เนื้อหาสอบ</a><a href="${base}${t.study}">ติวเนื้อหา</a><a href="${base}${t.practice}">แบบฝึกหัด</a><a href="${base}${t.predict}">เก็งข้อสอบ</a>
+      <a href="${base}${t.overview}">เนื้อหาสอบ</a><a href="${base}${t.study}">ติวเนื้อหา</a><a href="${base}${t.practice}">แบบฝึกหัด</a><a href="${base}${t.predict}">${esc(s.predictLabel||'เก็งข้อสอบ')}</a>
     </nav>
     ${s.reviewPdf?`<a class="memory-link" href="${esc(s.reviewPdf)}" target="_blank" rel="noopener">📑 สไลด์ทบทวนความจำ</a>`:''}
   </article>`}).join('');
