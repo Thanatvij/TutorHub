@@ -16,7 +16,7 @@ window.SUBJECTS = [
     id: "om3207",
     code: "3207",
     name: "Organization and Management (พฤติกรรมองค์การและการจัดการ)",
-    exam: "ยังไม่ยืนยันวันสอบปัจจุบัน · ชีทข้อสอบ 110 ข้อ",
+    exam: "ยังไม่ยืนยันวันสอบปัจจุบัน",
     status: "ready",
     predictLabel: "คำศัพท์",
     tabs: { overview: "#overview", study: "#study", practice: "#practice", predict: "#vocab" }
