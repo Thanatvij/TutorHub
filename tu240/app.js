@@ -5,6 +5,8 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const store={get(k,d){try{return JSON.parse(localStorage.getItem('tutor:tu240:'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('tutor:tu240:'+k,JSON.stringify(v))}catch(e){}}};
 const track=(n,p)=>{try{window.tutorTrack?.(n,Object.assign({subject:'tu240'},p||{}))}catch(e){}};
 const TABS=['overview','breakdown','study','vocab','practice','exam','refs'];
+const MINE=window.TU240_MINE||null;
+if(MINE){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');if(nav){const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';nav.after(b)}const sec=document.createElement('section');sec.className='panel';sec.id='mine';(document.getElementById('refs')||document.body).after(sec)}
 const ALIAS={predict:'exam'};
 const T=D.topics, topicById=id=>T.find(t=>t.id===id)||T[0];
 const CHARS_PER_PAGE=850; // ประมาณตัวอักษรต่อหน้ากระดาษเขียนมือ A4 (ไม่นับช่องว่าง)
@@ -460,7 +462,18 @@ async function exportMD({topics,vocab,link}){
 }
 window.__tu240={exportMD,printHTML,buildPrompt,prose};
 
+function drawMine(){if(!MINE)return;const box=$('mine');
+  box.innerHTML=`<h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)} · แท็บนี้อยู่ในไฟล์ <code>data/mine.js</code> ซึ่งไม่ขึ้น GitHub จึงเห็นเฉพาะตอนเปิดเว็บในเครื่องนี้</p>`+
+  MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=a.essay.join('').replace(/\s/g,'').length;return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
+  <div class="qbox"><b>โจทย์</b>${esc(t.question)}</div>
+  <div class="key"><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</div>
+  <h4>โครงที่ต้องจำ</h4><ol>${a.outline.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>
+  <h4>เรียงความ</h4><p class="small">ราว ${n.toLocaleString()} ตัวอักษร (ไม่นับช่องว่าง) ≈ ${(n/CHARS_PER_PAGE).toFixed(1)} หน้ากระดาษเขียนมือ</p>
+  ${a.essay.map(p=>`<p style="text-indent:2em">${esc(p)}</p>`).join('')}
+  <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');}
+
 /* ---------- start ---------- */
-drawOverview();drawRefs();redrawTopicTabs();drawExam();
+drawOverview();drawRefs();redrawTopicTabs();drawExam();drawMine();
+if(MINE)document.querySelector('[data-tab="mine"]').onclick=()=>{go('mine');scrollTo(0,0)};
 go((location.hash||'#overview').slice(1));
 })();
