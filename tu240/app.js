@@ -4,7 +4,7 @@ const D=window.TU240, MODELS=window.TU240_MODELS||{}, IMAGES=window.TU240_IMAGES
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store={get(k,d){try{return JSON.parse(localStorage.getItem('tutor:tu240:'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('tutor:tu240:'+k,JSON.stringify(v))}catch(e){}}};
 const track=(n,p)=>{try{window.tutorTrack?.(n,Object.assign({subject:'tu240'},p||{}))}catch(e){}};
-const TABS=['overview','breakdown','study','vocab','practice','exam','refs'];
+const TABS=['overview','breakdown','summary','study','vocab','practice','exam','refs'];
 const MINE=window.TU240_MINE||null;
 if(MINE){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');if(nav){const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';nav.after(b)}const sec=document.createElement('section');sec.className='panel';sec.id='mine';(document.getElementById('refs')||document.body).after(sec)}
 const ALIAS={predict:'exam'};
@@ -32,8 +32,18 @@ const curTopic=()=>topicById(store.get('topic','q1'));
 const seg=()=>{const cur=curTopic().id;
   return `<div class="seg" data-seg>${T.map(t=>`<button aria-pressed="${t.id===cur}" data-tid="${t.id}">${esc(t.label)}<small>${esc(t.title)}</small></button>`).join('')}</div>`};
 function bindSeg(){document.querySelectorAll('[data-seg] button').forEach(b=>b.onclick=()=>{store.set('topic',b.dataset.tid);redrawTopicTabs()})}
-function redrawTopicTabs(){drawBreakdown();drawStudy();drawVocab();drawPractice();bindSeg()}
+function redrawTopicTabs(){drawBreakdown();drawSummary();drawStudy();drawVocab();drawPractice();bindSeg()}
 
+function drawSummary(){
+  const t=curTopic(), n=qNum(t), core=t.study.find(s=>s.id===t.id+'-core'), keys=(t.vocab||[]).filter(v=>v.key);
+  $('summary').innerHTML=`<h2>สรุป</h2><p class="lead">อ่านหน้านี้คืนก่อนสอบ แต่ละข้อมีสรุปแกนเรื่อง และศัพท์หลักที่ต้องใช้เขียนตอบ รายละเอียดอยู่ในแท็บเนื้อหา</p>${seg()}
+  <div class="qbox"><b>โจทย์ข้อ ${n}</b>${esc(t.question)}</div>
+  ${core?`<article class="sheet">${prose(core.html,core.id)}</article>`:''}
+  ${keys.length?`<div class="sheet"><h3>ศัพท์หลักของข้อ ${n}</h3><ul>${keys.map(v=>`<li><b>${esc(v.t)}</b> (${esc(v.e)}): ${esc(v.def)}</li>`).join('')}</ul></div>`:''}
+  <div class="row"><button class="btn" id="sumToStudy">อ่านเนื้อหาเต็มข้อ ${n}</button><button class="btn main" id="sumToPractice">ทำแบบฝึกหัดข้อ ${n} →</button></div>`;
+  applyImages($('summary'));
+  $('sumToStudy').onclick=()=>jump('study');$('sumToPractice').onclick=()=>jump('practice');
+}
 /* ---------- สถานะการเรียน ---------- */
 const readSet=()=>new Set(store.get('read',[]));
 const actDone=()=>store.get('actdone',{});
