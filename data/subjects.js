@@ -4,6 +4,16 @@
    custom: ใส่ path ถ้าวิชานั้นมีหน้าเว็บเฉพาะของตัวเอง (เช่น DTI232 ที่มีเครื่องมือ interactive) */
 window.SUBJECTS = [
   {
+    id: "tu240",
+    code: "TU240",
+    name: "เศรษฐกิจภูมิรัฐศาสตร์โลก (World Geopolitical Economy)",
+    exam: "ปลายภาค · 24 พ.ย. 2569 · ข้อเขียน 3 ข้อ เลือกทำ 2",
+    status: "ready",
+    custom: "tu240/index.html",
+    predictLabel: "แนวข้อสอบ",
+    tabs: { overview: "#overview", study: "#study", practice: "#practice", predict: "#exam" }
+  },
+  {
     id: "fof",
     code: "FOF",
     name: "Foundations of Finance (พื้นฐานการเงิน)",

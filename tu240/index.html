@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EE4KQJKJ57"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EE4KQJKJ57');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TU240 · ห้องติวสอบ</title>
+<link rel="icon" href="../favicon.svg">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+.panel{display:none}.panel.on{display:block}
+.top .in{row-gap:6px}
+.seg{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px}
+.seg button{font:inherit;font-size:.92rem;font-weight:600;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;text-align:left}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.seg button small{display:block;font-weight:400;font-size:.78rem;opacity:.85}
+.small{font-size:.86rem;color:var(--graphite)}
+/* ป้ายที่มา */
+.src{display:inline-block;font-size:.74rem;font-weight:600;line-height:1.5;border:1.5px solid var(--focus);color:var(--focus);border-radius:999px;padding:0 8px;margin-left:4px;vertical-align:2px;white-space:nowrap;background:var(--paper)}
+.src.out{border-color:var(--warn);color:var(--warn)}
+h4 .src{font-weight:600}
+.src-line{font-size:.86rem;color:var(--graphite)}
+/* เนื้อหา */
+.study{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.study{grid-template-columns:minmax(0,1fr)}.toc{position:static!important;max-height:none!important}}
+.toc{position:sticky;top:64px;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:10px;max-height:calc(100vh - 80px);overflow:auto}
+.toc a{display:block;padding:4px 6px;border-radius:6px;text-decoration:none;font-size:.92rem;color:var(--ink)}
+.toc a.done::before{content:"✔ ";color:var(--good)}
+.toc a:hover{background:var(--soft)}
+.bar{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:6px 0 10px}.bar i{display:block;height:100%;background:var(--good);width:0}
+.sec figure{margin:12px 0 16px;text-align:center}
+.sec figure img{max-width:100%;height:auto;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.sec figcaption,figcaption{font-size:.84rem;color:var(--graphite);margin-top:5px}
+.ph .phbox{border:2px dashed var(--line);border-radius:10px;padding:26px 14px;background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 12px,var(--paper) 12px,var(--paper) 24px);color:var(--graphite)}
+.ph .phbox b{color:var(--ink)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin:10px 0}
+.grid3>div{border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--paper)}
+.grid3 small{color:var(--graphite)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:10px 0}
+.bridge{margin:0 0 12px;padding:8px 12px;border-left:3px solid var(--focus);background:var(--soft);color:var(--ink);font-size:.95em}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:10px 0}
+.three>.stance,.two>.stance{margin:0}
+.two>figure,.three>figure{min-width:0;margin:0}
+.sec figure img{max-width:100%;height:auto}
+.two>div{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--paper)}
+.two h5,.stance h5{margin:0 0 6px;font-size:1rem}
+.stance{border:1.5px solid var(--line);border-left:5px solid var(--focus);border-radius:10px;padding:10px 14px;margin:12px 0;background:var(--paper)}
+.stance p{margin:5px 0}
+.stance .cite{font-size:.9rem;color:var(--ink);background:var(--soft);border-radius:6px;padding:5px 8px}
+.stance .weak{font-size:.9rem;color:var(--graphite)}
+.outline li{margin:6px 0}
+.readrow{display:flex;justify-content:flex-end;margin-top:8px;font-size:.9rem}
+/* โจทย์ */
+.qbox{border:1.5px solid var(--ink);border-radius:10px;padding:12px 14px;background:var(--soft);margin-bottom:14px}
+.qbox b{display:block;margin-bottom:4px}
+.phr{border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0;background:var(--paper)}
+.phr .p{font-size:1.05rem;font-weight:700;background:color-mix(in srgb,var(--hi) 45%,transparent);display:inline;padding:1px 4px;border-radius:4px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.phr .num{font-family:var(--mono);font-weight:700;color:var(--focus);margin-right:6px}
+.slidelist{list-style:none;padding:0;margin:8px 0}
+.slidelist li{display:grid;grid-template-columns:230px minmax(0,1fr);gap:8px;border-top:1px dashed var(--line);padding:5px 0}
+@media (max-width:640px){.slidelist li{grid-template-columns:1fr}}
+.slidelist .fn{font-weight:600}
+.slidelist .fn small{display:block;font-weight:400;color:var(--graphite);font-size:.78rem}
+.outnote{border-left:4px solid var(--warn);padding:5px 10px;background:color-mix(in srgb,var(--warn) 7%,transparent);border-radius:4px;font-size:.92rem}
+.heard{font-size:.92rem;color:var(--graphite);border-left:3px solid var(--line);padding-left:10px;margin:4px 0}
+/* คำศัพท์ */
+.vtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.vtools input[type=search]{font:inherit;flex:1;min-width:200px;padding:7px 10px;border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.vcard{border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;background:var(--paper)}
+.vcard.key{border-left:5px solid var(--hi);background:var(--paper);margin:0}
+.vcard h4{margin:0 0 2px;border:0;padding:0;font-size:1.06rem}
+.vcard .en{font-size:.86rem;color:var(--graphite);margin-bottom:6px}
+.vcard .ty{display:inline-block;font-size:.76rem;font-weight:700;border-radius:6px;padding:1px 8px;background:var(--ink);color:var(--paper);margin-bottom:6px}
+.vcard .what{font-weight:600;margin:4px 0}
+.vcard .def{margin:4px 0}
+.vcard .use,.vcard .vsrc{font-size:.86rem;color:var(--graphite);margin:4px 0 0}
+/* แบบฝึกหัด */
+.act{border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px;background:var(--paper)}
+.act h3{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.act .tag{font-size:.75rem;font-weight:600;border:1.5px solid var(--focus);color:var(--focus);border-radius:999px;padding:0 8px}
+.act .done-chip{font-size:.78rem;font-weight:600;color:var(--good)}
+.choice{display:block;width:100%;text-align:left;font:inherit;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:7px 10px;margin:5px 0;cursor:pointer}
+.choice.right,.ok{border-color:var(--good)!important;background:color-mix(in srgb,var(--good) 16%,transparent)}
+.choice.wrong,.bad{border-color:var(--warn)!important;background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.mq{margin:0 0 14px}.mq .qtext{font-weight:600}
+.explain{font-size:.93rem;margin-top:4px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px;align-items:center;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;margin:6px 0}
+@media (max-width:640px){.prow{grid-template-columns:1fr}}
+.prow select{font:inherit;width:100%;padding:6px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.prow .fix{grid-column:1/-1;font-size:.88rem;color:var(--graphite)}
+.olist{list-style:none;padding:0;margin:8px 0}
+.olist li{display:flex;gap:8px;align-items:center;border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;margin:6px 0;background:var(--paper)}
+.olist li .n{font-family:var(--mono);font-weight:600;min-width:1.6em}
+.olist li .tx{flex:1}
+.olist li button{font:inherit;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);border-radius:6px;padding:0 8px;cursor:pointer;line-height:1.7}
+.olist li button:disabled{opacity:.35}
+.tfrow{border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0}
+.tfrow .btns{display:flex;gap:6px;margin-top:6px}
+.result{font-weight:600;margin-top:6px}
+/* แนวข้อสอบ */
+.essay{width:100%;min-height:340px;font:inherit;font-size:1rem;line-height:1.7;padding:12px;border:1.5px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);resize:vertical}
+.meter{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:.9rem;margin:6px 0}
+.meter .m{border:1px dashed var(--line);border-radius:8px;padding:3px 9px}
+.meter .m b{font-family:var(--mono)}
+.warnline{color:var(--warn);font-weight:600}
+.okline{color:var(--good);font-weight:600}
+.promptbox{width:100%;min-height:220px;font-family:var(--mono);font-size:.8rem;padding:10px;border:1.5px solid var(--line);border-radius:8px;background:var(--soft);color:var(--ink)}
+.checklist label{display:block;margin:3px 0}
+.model h3{font-size:1.05rem;margin-top:14px}
+/* ภาพรวม */
+.stat{border:1px dashed var(--line);border-radius:8px;padding:6px 10px;display:inline-block;margin:0 6px 6px 0}.stat b{font-size:1.05rem}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;counter-reset:f}
+.flow div{border:1.5px solid var(--line);border-radius:10px;padding:10px;background:var(--paper);counter-increment:f}
+.flow div::before{content:counter(f);display:inline-block;width:1.6em;height:1.6em;line-height:1.6em;text-align:center;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:700;font-size:.85rem;margin-bottom:4px}
+.flow b{display:block}
+.disc{border:2px solid var(--warn);border-radius:10px;padding:12px 16px;background:color-mix(in srgb,var(--warn) 6%,var(--paper));margin-bottom:14px}
+.disc h3{color:var(--warn)}
+/* ส่งออก */
+.exportbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;border:1.5px dashed var(--focus);border-radius:10px;padding:8px 12px;margin:0 0 14px}
+.exportbar select{font:inherit;padding:4px 8px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.reflist li{margin:6px 0}
+.reflist a{word-break:break-word}
+/* พิมพ์ PDF */
+@media print{
+  body.printing #printRoot{font-size:10.5pt}
+  body.printing #printRoot h3{font-size:13.5pt;margin:6mm 0 2mm;border-bottom:1px solid #c9d3e0;padding-bottom:1mm}
+  body.printing #printRoot h4{font-size:11.5pt;border-left:3pt solid #2f6feb;padding-left:2.5mm;margin:4mm 0 1.5mm;break-after:avoid}
+  body.printing #printRoot figure{break-inside:avoid;page-break-inside:avoid;text-align:center;margin:3mm 0}
+  body.printing #printRoot figure img{max-width:100%;max-height:200mm}
+  body.printing #printRoot .stance,body.printing #printRoot .vcard,body.printing #printRoot .grid3>div,body.printing #printRoot .two>div{break-inside:avoid;page-break-inside:avoid}
+  body.printing #printRoot .src{border:1px solid #2f6feb;color:#2f6feb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.printing #printRoot .src.out{border-color:#c2410c;color:#c2410c}
+  body.printing #printRoot .vgrid{display:block}
+  body.printing #printRoot .vcard{margin:0 0 3mm}
+  body.printing #printRoot .ph .phbox{background:#fff!important}
+    body.printing #printRoot .print-section .sec{break-before:page;page-break-before:always}
+  body.printing #printRoot .print-section .sec:first-of-type{break-before:auto;page-break-before:auto}
+  body.printing #printRoot h3,body.printing #printRoot h4,body.printing #printRoot h5{break-after:avoid;page-break-after:avoid}
+  body.printing #printRoot .two,body.printing #printRoot .three{display:block}
+  body.printing #printRoot .two>*,body.printing #printRoot .three>*{margin:0 0 8pt}
+  body.printing #printRoot .stance,body.printing #printRoot .key,body.printing #printRoot figure,body.printing #printRoot tr,body.printing #printRoot li,body.printing #printRoot .vcard,body.printing #printRoot .phr,body.printing #printRoot .qbox{break-inside:avoid;page-break-inside:avoid}
+  body.printing #printRoot figure img{max-height:150mm;width:auto;max-width:100%;display:block;margin:0 auto}
+  body.printing #printRoot .ptoc{font-size:10pt;line-height:1.45;margin:0;padding-left:1.4em}
+  body.printing #printRoot .ptoc>li{break-inside:avoid;page-break-inside:avoid;margin:0 0 6pt}
+  body.printing #printRoot .ptoc ol{display:grid;grid-template-columns:1fr 1fr;column-gap:18pt;row-gap:1pt;margin:2pt 0 0;padding-left:1.4em}
+  body.printing #printRoot .ptoc ol li{break-inside:avoid;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="in" role="tablist">
+  <a class="brand" href="../index.html">← เลือกวิชา</a>
+  <b style="margin-right:8px">TU240</b>
+  <button role="tab" data-tab="overview">เนื้อหาสอบ</button>
+  <button role="tab" data-tab="breakdown">ตีแผ่โจทย์</button>
+  <button role="tab" data-tab="study">เนื้อหา</button>
+  <button role="tab" data-tab="vocab">คำศัพท์</button>
+  <button role="tab" data-tab="practice">แบบฝึกหัด</button>
+  <button role="tab" data-tab="exam">แนวข้อสอบ</button>
+  <button role="tab" data-tab="refs">อ้างอิง</button>
+</div></div>
+
+<main class="wrap">
+  <section class="panel" id="overview"></section>
+  <section class="panel" id="breakdown"></section>
+  <section class="panel" id="study"></section>
+  <section class="panel" id="vocab"></section>
+  <section class="panel" id="practice"></section>
+  <section class="panel" id="exam"></section>
+  <section class="panel" id="refs"></section>
+</main>
+<div id="printRoot"></div>
+
+<script src="data/core.js"></script>
+<script src="data/q1.js"></script>
+<script src="data/q2.js"></script>
+<script src="data/q3.js"></script>
+<script src="data/plus.js"></script>
+<script src="data/story.js"></script>
+<script src="data/story2.js"></script>
+<script src="data/story3.js"></script>
+<script src="data/story4.js"></script>
+<script src="data/v1.js"></script>
+<script src="data/v2.js"></script>
+<script src="data/v3.js"></script>
+<script src="data/models.js"></script>
+<script src="data/images.js"></script>
+<script src="app.js"></script>
+<script src="../shared/site-services.js"></script>
+</body>
+</html>
