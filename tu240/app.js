@@ -5,8 +5,8 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const store={get(k,d){try{return JSON.parse(localStorage.getItem('tutor:tu240:'+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem('tutor:tu240:'+k,JSON.stringify(v))}catch(e){}}};
 const track=(n,p)=>{try{window.tutorTrack?.(n,Object.assign({subject:'tu240'},p||{}))}catch(e){}};
 const TABS=['overview','breakdown','summary','study','vocab','practice','exam','refs'];
-const MINE=window.TU240_MINE||null;
-if(MINE){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');if(nav){const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';nav.after(b)}const sec=document.createElement('section');sec.className='panel';sec.id='mine';(document.getElementById('refs')||document.body).after(sec)}
+let MINE=window.TU240_MINE||null; // คำตอบส่วนตัว: ซ่อนไว้ ต้องกดปุ่ม Feedback 5 ครั้งติดกันถึงจะเปิด (ดู unlockMine)
+
 const ALIAS={predict:'exam'};
 const T=D.topics, topicById=id=>T.find(t=>t.id===id)||T[0];
 const CHARS_PER_PAGE=850; // ประมาณตัวอักษรต่อหน้ากระดาษเขียนมือ A4 (ไม่นับช่องว่าง)
@@ -473,17 +473,54 @@ async function exportMD({topics,vocab,link}){
 window.__tu240={exportMD,printHTML,buildPrompt,prose};
 
 function drawMine(){if(!MINE)return;const box=$('mine');
-  box.innerHTML=`<h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)} · แท็บนี้อยู่ในไฟล์ <code>data/mine.js</code> ซึ่งไม่ขึ้น GitHub จึงเห็นเฉพาะตอนเปิดเว็บในเครื่องนี้</p>`+
+  const local=!!window.TU240_MINE;
+  box.innerHTML=`<h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)}</p>
+  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
   MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=a.essay.join('').replace(/\s/g,'').length;return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
   <div class="qbox"><b>โจทย์</b>${esc(t.question)}</div>
   <div class="key"><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</div>
   <h4>โครงที่ต้องจำ</h4><ol>${a.outline.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>
   <h4>เรียงความ</h4><p class="small">ราว ${n.toLocaleString()} ตัวอักษร (ไม่นับช่องว่าง) ≈ ${(n/CHARS_PER_PAGE).toFixed(1)} หน้ากระดาษเขียนมือ</p>
   ${a.essay.map(p=>`<p style="text-indent:2em">${esc(p)}</p>`).join('')}
-  <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');}
+  <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');
+  $('mineLock').onclick=lockMine;
+  if(local)$('mineEnc').onclick=async()=>{
+    const E=await encryptMine(MINE_KEY,MINE);const blob=new Blob(['window.TU240_MINE_ENC='+JSON.stringify(E)+';\n'],{type:'text/javascript'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mine.enc.js';a.click();};
+}
+
+/* ---------- แท็บส่วนตัว: เข้ารหัส AES-GCM + ปลดล็อกด้วยการกดปุ่ม Feedback 5 ครั้ง ---------- */
+// รหัสฝังในโค้ด: เป็นการซ่อน ไม่ใช่การป้องกัน (ใครอ่านโค้ดก็เปิดได้) ใช้กันคนเปิดผ่านๆ และการค้นข้อความใน GitHub
+const MINE_KEY='tbhf-6cry-qkt4-m8t2';
+const b64=u=>btoa(String.fromCharCode(...u)), unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(pass,salt,iter){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+async function encryptMine(pass,obj){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),iter=600000;
+  const key=await deriveKey(pass,salt,iter);const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));
+  return {v:1,iter,salt:b64(salt),iv:b64(iv),ct:b64(new Uint8Array(ct))};}
+async function decryptMine(pass){const E=window.TU240_MINE_ENC;const key=await deriveKey(pass,unb64(E.salt),E.iter);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(E.iv)},key,unb64(E.ct));return JSON.parse(new TextDecoder().decode(pt));}
+function showMine(obj,open){MINE=obj;
+  if(!TABS.includes('mine')){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';
+    b.onclick=()=>{go('mine');scrollTo(0,0)};nav.after(b);const sec=document.createElement('section');sec.className='panel';sec.id='mine';$('refs').after(sec);}
+  drawMine();if(open){go('mine');scrollTo(0,0)}}
+function lockMine(){try{sessionStorage.removeItem('tu240mine')}catch(e){}
+  document.querySelector('[data-tab="mine"]')?.remove();$('mine')?.remove();const i=TABS.indexOf('mine');if(i>=0)TABS.splice(i,1);
+  if(!window.TU240_MINE)MINE=null;go('overview');}
+async function unlockMine(){
+  if(MINE){showMine(MINE,true);return}
+  if(!window.TU240_MINE_ENC||!(window.crypto&&crypto.subtle))return;
+  try{showMine(await decryptMine(MINE_KEY),true);try{sessionStorage.setItem('tu240mine','1')}catch(e){}}catch(e){}}
+(function(){let n=0,tm=null;
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#feedbackOpen');if(!b||!(window.TU240_MINE||window.TU240_MINE_ENC))return;
+    e.stopImmediatePropagation();e.preventDefault();n++;clearTimeout(tm);
+    if(n>=5){n=0;unlockMine();return}
+    tm=setTimeout(()=>{n=0;b.onclick&&b.onclick(e)},700);},true);
+  // เปิดค้างไว้ในแท็บเดิมของเบราว์เซอร์ (sessionStorage) จนกว่าจะปิดแท็บหรือกดล็อก
+  try{if(sessionStorage.getItem('tu240mine')&&window.TU240_MINE_ENC&&!window.TU240_MINE)decryptMine(MINE_KEY).then(o=>{showMine(o,false);if(location.hash==='#mine')go('mine')}).catch(()=>{})}catch(e){}
+})();
 
 /* ---------- start ---------- */
-drawOverview();drawRefs();redrawTopicTabs();drawExam();drawMine();
-if(MINE)document.querySelector('[data-tab="mine"]').onclick=()=>{go('mine');scrollTo(0,0)};
+drawOverview();drawRefs();redrawTopicTabs();drawExam();
 go((location.hash||'#overview').slice(1));
 })();
