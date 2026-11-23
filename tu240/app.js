@@ -37,11 +37,12 @@ function redrawTopicTabs(){ttsStop();drawBreakdown();drawSummary();drawStudy();d
 function drawSummary(){
   const t=curTopic(), n=qNum(t), core=t.study.find(s=>s.id===t.id+'-core'), keys=(t.vocab||[]).filter(v=>v.key);
   $('summary').innerHTML=`<h2>สรุป</h2><p class="lead">อ่านหน้านี้คืนก่อนสอบ แต่ละข้อมีสรุปแกนเรื่อง และศัพท์หลักที่ต้องใช้เขียนตอบ รายละเอียดอยู่ในแท็บเนื้อหา</p>${seg()}
+  ${pdfBtns('ดาวน์โหลด PDF สรุป พร้อมคำตอบ:',[['sum-q2','PDF สรุป ข้อ 2'],['sum-q3','PDF สรุป ข้อ 3']])}
   <div class="qbox"><b>โจทย์ข้อ ${n}</b>${esc(t.question)}</div>
   ${core?`<article class="sheet">${prose(core.html,core.id)}</article>`:''}
   ${keys.length?`<div class="sheet"><h3>ศัพท์หลักของข้อ ${n}</h3><ul>${keys.map(v=>`<li><b>${esc(v.t)}</b> (${esc(v.e)}): ${esc(v.def)}</li>`).join('')}</ul></div>`:''}
   <div class="row"><button class="btn" id="sumToStudy">อ่านเนื้อหาเต็มข้อ ${n}</button><button class="btn main" id="sumToPractice">ทำแบบฝึกหัดข้อ ${n} →</button></div>`;
-  applyImages($('summary'));
+  applyImages($('summary'));bindPdf($('summary'));
   $('sumToStudy').onclick=()=>jump('study');$('sumToPractice').onclick=()=>jump('practice');
 }
 /* ---------- สถานะการเรียน ---------- */
@@ -150,13 +151,14 @@ function drawStudy(){
   const t=curTopic(), r=readSet(), n=qNum(t);
   $('study').innerHTML=`<h2>เนื้อหา</h2><p class="lead">อ่านเรียงจากบนลงล่างได้เลย ที่มาของแต่ละหัวข้อ (สไลด์ไฟล์ไหน หรือข้อมูลนอกสไลด์) รวมไว้ในหัวข้อแรก "แผนที่เนื้อหาข้อนี้" ลิงก์ข้อมูลนอกสไลด์อยู่ในแท็บอ้างอิง</p>${seg()}
   ${exportBar('study')}
+  ${pdfBtns('ดาวน์โหลด PDF เนื้อหาเต็ม พร้อมคำตอบ:',[['full-q2','PDF เต็ม ข้อ 2'],['full-q3','PDF เต็ม ข้อ 3']])}
   <div class="qbox"><b>โจทย์ข้อ ${n}</b>${esc(t.question)}<div class="small" style="margin-top:6px">ใช้สไลด์: ${esc(t.slides)}</div></div>
   <div class="study"><nav class="toc" aria-label="สารบัญ"><b>สารบัญ</b><div class="bar"><i id="pbar"></i></div><div class="hint" id="prog"></div>
     ${t.study.map(s=>`<a href="#" data-goto="${s.id}" class="${r.has(s.id)?'done':''}">${esc(s.title)}</a>`).join('')}</nav>
   <div>${t.study.map(s=>`<article class="sheet sec" id="sec-${s.id}"><h3>${esc(s.title)}</h3>${prose(s.html,s.id)}
     <label class="readrow"><input type="checkbox" data-read="${s.id}" ${r.has(s.id)?'checked':''}>&nbsp;อ่านแล้ว</label></article>`).join('')}
     <div class="row"><button class="btn" id="toVocab">ทบทวนคำศัพท์ข้อ ${n}</button><button class="btn main" id="toPractice">ทำแบบฝึกหัดข้อ ${n} →</button></div></div></div>`;
-  applyImages($('study'));
+  applyImages($('study'));bindPdf($('study'));
   const upd=()=>{const rs=readSet(),k=t.study.filter(s=>rs.has(s.id)).length;$('prog').textContent=`อ่านแล้ว ${k}/${t.study.length}`;$('pbar').style.width=(k/t.study.length*100)+'%';
     document.querySelectorAll('.toc a').forEach(a=>a.classList.toggle('done',rs.has(a.dataset.goto)))};
   document.querySelectorAll('[data-read]').forEach(c=>c.onchange=()=>{const rs=readSet();c.checked?rs.add(c.dataset.read):rs.delete(c.dataset.read);store.set('read',[...rs]);upd();track('section_read',{section:c.dataset.read,done:c.checked})});
@@ -471,7 +473,7 @@ async function exportMD({topics,vocab,link}){
   track('export_md',{scope:topics.length});
   return md;
 }
-window.__tu240={exportMD,printHTML,buildPrompt,prose};
+window.__tu240={exportMD,printHTML,buildPrompt,prose,get T(){return T},get MINE(){return MINE},mineAnswerHTML,mineFmt,vcard,applyImages,ensureMinePrintCss,esc,qNum};
 
 
 /* ---------- อ่านออกเสียง (Web Speech API ในเบราว์เซอร์ ฟรี ใช้เสียงไทยของเครื่อง) ---------- */
@@ -529,7 +531,8 @@ function drawMine(){if(!MINE)return;const box=$('mine');
   #mine .chips span{display:inline-block;background:#e8eeff;color:#14213d;font-weight:600;border:1px solid #9fb0e0;border-radius:12px;padding:1px 9px;margin:2px;font-size:.88em}#mine .keys li{margin:.3em 0}</style>
   <h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)}</p>
   <p class="small">สัญลักษณ์มี 2 แบบ ตัวหนาทั้งคู่: <mark class="m-key">ไฮไลต์เหลือง</mark> = สำคัญมาก ต้องจำและเขียน (นิยาม จุดยืน ข้อสรุป หลักฐานหลัก) · <b class="m-must">เส้นฟ้า</b> = สำคัญแต่ลืมได้ (ชื่อ/ตัวเลขประกอบ)</p>
-  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${MINE.answers.map(x=>`<button class="btn main" data-mpdf="${x.q}">PDF ข้อ ${qNum(T.find(y=>y.id===x.q))}: เนื้อหา + คำตอบ</button>`).join("")}${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
+  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${local?'<button class="btn" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
+  pdfBtns('แนวคำตอบ PDF (รวมข้อ 2 และ 3):',[['sum-q2q3','PDF สรุป ข้อ 2+3'],['full-q2q3','PDF เนื้อหาเต็ม ข้อ 2+3']])+
   MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=mineLen(a,false),n2=mineLen(a,true);return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
   <div class="qbox"><b>โจทย์</b>${esc(t.question)}</div>
   <div class="key"><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</div>
@@ -540,7 +543,7 @@ function drawMine(){if(!MINE)return;const box=$('mine');
   ${a.essay.map(p=>`<p style="text-indent:2em">${mineFmt(p)}</p>`).join('')}
   <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');
   $('mineLock').onclick=lockMine;addTTS(box);ensureMinePrintCss();
-  box.querySelectorAll('[data-mpdf]').forEach(b=>b.onclick=()=>{const x=MINE.answers.find(y=>y.q===b.dataset.mpdf);exportPDF({topics:[T.find(y=>y.id===x.q)],vocab:true,after:mineAnswerHTML(x)})});
+  bindPdf(box);
   if(local)$('mineEnc').onclick=async()=>{
     const E=await encryptMine(MINE_KEY,MINE);const blob=new Blob(['window.TU240_MINE_ENC='+JSON.stringify(E)+';\n'],{type:'text/javascript'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mine.enc.js';a.click();};
@@ -557,13 +560,27 @@ async function encryptMine(pass,obj){const salt=crypto.getRandomValues(new Uint8
   return {v:1,iter,salt:b64(salt),iv:b64(iv),ct:b64(new Uint8Array(ct))};}
 async function decryptMine(pass){const E=window.TU240_MINE_ENC;const key=await deriveKey(pass,unb64(E.salt),E.iter);
   const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(E.iv)},key,unb64(E.ct));return JSON.parse(new TextDecoder().decode(pt));}
-function showMine(obj,open){MINE=obj;
+/* ---------- PDF ส่วนตัว (เข้ารหัส เห็นปุ่มเฉพาะตอนปลดล็อก) ---------- */
+let PRIV=false;
+const PDFN={'sum-q2':'TU240-สรุป-ข้อ2-พร้อมคำตอบ.pdf','sum-q3':'TU240-สรุป-ข้อ3-พร้อมคำตอบ.pdf','sum-q2q3':'TU240-สรุป-ข้อ2-ข้อ3-พร้อมคำตอบ.pdf',
+  'full-q2':'TU240-เต็ม-ข้อ2-พร้อมคำตอบ.pdf','full-q3':'TU240-เต็ม-ข้อ3-พร้อมคำตอบ.pdf','full-q2q3':'TU240-เต็ม-ข้อ2-ข้อ3-พร้อมคำตอบ.pdf'};
+function pdfBtns(label,items){if(!PRIV)return '';
+  return `<div class="row pdfrow" style="align-items:center"><b>${esc(label)}</b>${items.map(([n,t])=>`<button class="btn main" data-ppdf="${n}">${esc(t)}</button>`).join('')}</div>`}
+function bindPdf(root){root.querySelectorAll("[data-ppdf]").forEach(b=>b.onclick=async()=>{
+  const old=b.textContent;b.disabled=true;b.textContent='กำลังเตรียมไฟล์…';
+  try{const r=await fetch('pdf/'+b.dataset.ppdf+'.bin');if(!r.ok)throw 0;const u=new Uint8Array(await r.arrayBuffer());
+    const key=await deriveKey(MINE_KEY,u.slice(0,16),200000);
+    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:u.slice(16,28)},key,u.slice(28));
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([pt],{type:'application/pdf'}));a.download=PDFN[b.dataset.ppdf];document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);b.textContent='ดาวน์โหลดแล้ว ✓';setTimeout(()=>{b.textContent=old;b.disabled=false},2500);return}
+  catch(e){b.textContent='ไม่พบไฟล์ (ลอง push ไฟล์ pdf/ ก่อน)';setTimeout(()=>{b.textContent=old;b.disabled=false},3500)}})}
+function showMine(obj,open){MINE=obj;PRIV=true;
   if(!TABS.includes('mine')){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';
     b.onclick=()=>{go('mine');scrollTo(0,0)};nav.after(b);const sec=document.createElement('section');sec.className='panel';sec.id='mine';$('refs').after(sec);}
-  drawMine();if(open){go('mine');scrollTo(0,0)}}
+  drawMine();redrawTopicTabs();if(open){go('mine');scrollTo(0,0)}}
 function lockMine(){try{ttsStop()}catch(e){}try{sessionStorage.removeItem('tu240mine')}catch(e){}
   document.querySelector('[data-tab="mine"]')?.remove();$('mine')?.remove();const i=TABS.indexOf('mine');if(i>=0)TABS.splice(i,1);
-  if(!window.TU240_MINE)MINE=null;go('overview');}
+  if(!window.TU240_MINE)MINE=null;PRIV=false;redrawTopicTabs();go('overview');}
 async function unlockMine(){
   if(MINE){showMine(MINE,true);return}
   if(!window.TU240_MINE_ENC||!(window.crypto&&crypto.subtle))return;
