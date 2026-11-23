@@ -384,10 +384,11 @@ function printHTML(topics,withVocab){
     ${withVocab?`<section class="sec"><h3>คำศัพท์ · ${esc(t.label)}</h3><div class="vgrid">${t.vocab.map(vcard).join('')}</div></section>`:''}</div>`).join('')}
   `;
 }
-function exportPDF({topics,vocab}){
-  const root=$('printRoot');root.innerHTML=printHTML(topics,vocab);applyImages(root);
-  const imgs=[...root.querySelectorAll('img')];
-  Promise.all(imgs.map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r}))).then(()=>{
+function exportPDF({topics,vocab,after}){
+  const root=$('printRoot');root.innerHTML=printHTML(topics,vocab)+(after||'');applyImages(root);
+  const imgs=[...root.querySelectorAll('img')];imgs.forEach(im=>{im.loading='eager'});
+  const wait=Promise.all(imgs.map(im=>im.complete?1:new Promise(r=>{im.onload=im.onerror=r})));
+  Promise.race([wait,new Promise(r=>setTimeout(r,6000))]).then(()=>{
     document.body.classList.add('printing');
     const end=()=>{document.body.classList.remove('printing');root.innerHTML='';removeEventListener('afterprint',end)};
     addEventListener('afterprint',end);
@@ -505,6 +506,18 @@ function addTTS(root){if(!root||!('speechSynthesis' in window))return;
     paras[0].before(bar)})}
 if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
 
+
+function mineAnswerHTML(a){const t=T.find(x=>x.id===a.q);
+  return `<div class="print-section print-answer"><h2>คำตอบของผม · ข้อ ${qNum(t)}</h2>
+  <p><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</p>
+  <h3>โครงที่ต้องจำ</h3><ol>${a.outline.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>
+  ${a.chips?`<h3>ชื่อที่ต้องใส่ให้ครบ</h3><p>${a.chips.map(c=>esc(c)).join(' · ')}</p>`:''}
+  <h3>เรียงความ</h3><p class="small">ไฮไลต์เหลือง = สำคัญมาก · ตัวหนา+เส้นฟ้า = สำคัญแต่ลืมได้</p>
+  ${a.essay.map(p=>`<p style="text-indent:2em">${mineFmt(p)}</p>`).join('')}
+  <h3>ถ้าโดนแย้ง</h3><p>${esc(a.counter)}</p></div>`}
+function ensureMinePrintCss(){if(document.getElementById('minePrintCss'))return;const s=document.createElement('style');s.id='minePrintCss';
+  s.textContent='#printRoot .m-key{background:#ffe66b;color:#111;font-weight:700;padding:0 2px;border-radius:2px;-webkit-print-color-adjust:exact;print-color-adjust:exact}#printRoot .m-must{font-weight:700;text-decoration:underline;text-decoration-color:#2f9fd8;text-decoration-thickness:1.5pt;text-underline-offset:2pt}#printRoot .m-key .m-must{color:#111}@media print{body.printing #printRoot .print-answer{break-before:page;page-break-before:always}}';document.head.appendChild(s)}
+
 function mineFmt(p){ // {{ทฤษฎี}} [[เสริม]] ==จำเป็นประโยค== **ต้องเขียน**
   return esc(p).replace(/\{\{([\s\S]+?)\}\}/g,'<span class="m-th">$1</span>').replace(/\[\[([\s\S]+?)\]\]/g,'<span class="m-opt">$1</span>')
     .replace(/\^\^([\s\S]+?)\^\^/g,'<b class="m-top">$1</b>').replace(/==([\s\S]+?)==/g,'<mark class="m-key">$1</mark>').replace(/\*\*([\s\S]+?)\*\*/g,'<b class="m-must">$1</b>');}
@@ -516,7 +529,7 @@ function drawMine(){if(!MINE)return;const box=$('mine');
   #mine .chips span{display:inline-block;background:#e8eeff;color:#14213d;font-weight:600;border:1px solid #9fb0e0;border-radius:12px;padding:1px 9px;margin:2px;font-size:.88em}#mine .keys li{margin:.3em 0}</style>
   <h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)}</p>
   <p class="small">สัญลักษณ์มี 2 แบบ ตัวหนาทั้งคู่: <mark class="m-key">ไฮไลต์เหลือง</mark> = สำคัญมาก ต้องจำและเขียน (นิยาม จุดยืน ข้อสรุป หลักฐานหลัก) · <b class="m-must">เส้นฟ้า</b> = สำคัญแต่ลืมได้ (ชื่อ/ตัวเลขประกอบ)</p>
-  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
+  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${MINE.answers.map(x=>`<button class="btn main" data-mpdf="${x.q}">PDF ข้อ ${qNum(T.find(y=>y.id===x.q))}: เนื้อหา + คำตอบ</button>`).join("")}${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
   MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=mineLen(a,false),n2=mineLen(a,true);return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
   <div class="qbox"><b>โจทย์</b>${esc(t.question)}</div>
   <div class="key"><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</div>
@@ -526,7 +539,8 @@ function drawMine(){if(!MINE)return;const box=$('mine');
   <h4>เรียงความ</h4><p class="small">ราว ${n.toLocaleString()} ตัวอักษร (ไม่นับช่องว่าง) ≈ ${(n/1500).toFixed(1)} หน้า ถ้าลายมือคุณเขียนได้ราว 1,500 ตัวอักษรต่อหน้า</p>
   ${a.essay.map(p=>`<p style="text-indent:2em">${mineFmt(p)}</p>`).join('')}
   <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');
-  $('mineLock').onclick=lockMine;addTTS(box);
+  $('mineLock').onclick=lockMine;addTTS(box);ensureMinePrintCss();
+  box.querySelectorAll('[data-mpdf]').forEach(b=>b.onclick=()=>{const x=MINE.answers.find(y=>y.q===b.dataset.mpdf);exportPDF({topics:[T.find(y=>y.id===x.q)],vocab:true,after:mineAnswerHTML(x)})});
   if(local)$('mineEnc').onclick=async()=>{
     const E=await encryptMine(MINE_KEY,MINE);const blob=new Blob(['window.TU240_MINE_ENC='+JSON.stringify(E)+';\n'],{type:'text/javascript'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mine.enc.js';a.click();};
