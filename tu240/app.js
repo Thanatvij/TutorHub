@@ -15,7 +15,7 @@ const SHORT={SI1:'SI 1',SI2:'SI 2',SI3:'SI 3',SI4:'SI 4',SI5:'SI 5',SI6:'SI 6',S
 const qNum=t=>T.indexOf(t)+1;
 
 /* ---------- แท็บ ---------- */
-function go(t){t=ALIAS[t]||t;if(!TABS.includes(t))t='overview';
+function go(t){try{ttsStop()}catch(e){}t=ALIAS[t]||t;if(!TABS.includes(t))t='overview';
   document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===t));
   if(t==='overview')drawOverview();
@@ -32,7 +32,7 @@ const curTopic=()=>topicById(store.get('topic','q1'));
 const seg=()=>{const cur=curTopic().id;
   return `<div class="seg" data-seg>${T.map(t=>`<button aria-pressed="${t.id===cur}" data-tid="${t.id}">${esc(t.label)}<small>${esc(t.title)}</small></button>`).join('')}</div>`};
 function bindSeg(){document.querySelectorAll('[data-seg] button').forEach(b=>b.onclick=()=>{store.set('topic',b.dataset.tid);redrawTopicTabs()})}
-function redrawTopicTabs(){drawBreakdown();drawSummary();drawStudy();drawVocab();drawPractice();bindSeg()}
+function redrawTopicTabs(){ttsStop();drawBreakdown();drawSummary();drawStudy();drawVocab();drawPractice();bindSeg();addTTS($('study'));addTTS($('summary'))}
 
 function drawSummary(){
   const t=curTopic(), n=qNum(t), core=t.study.find(s=>s.id===t.id+'-core'), keys=(t.vocab||[]).filter(v=>v.key);
@@ -472,6 +472,39 @@ async function exportMD({topics,vocab,link}){
 }
 window.__tu240={exportMD,printHTML,buildPrompt,prose};
 
+
+/* ---------- อ่านออกเสียง (Web Speech API ในเบราว์เซอร์ ฟรี ใช้เสียงไทยของเครื่อง) ---------- */
+const TTS={rate:1,run:0};
+try{const r=parseFloat(localStorage.getItem('tu240tts'));if(r)TTS.rate=r}catch(e){}
+function ttsStop(){TTS.run++;try{speechSynthesis.cancel()}catch(e){}document.querySelectorAll('.tts-on').forEach(e=>e.classList.remove('tts-on'));document.querySelectorAll('.tts-btn.on').forEach(b=>{b.classList.remove('on');b.textContent='▶'})}
+function ttsText(p){const c=p.cloneNode(true);c.querySelectorAll('.tts-btn,.src,.cite,sup,.slide-ref').forEach(e=>e.remove());return c.textContent.replace(/\s+/g,' ').trim()}
+function ttsChunks(t){const out=[];let cur='';for(const w of t.split(' ')){if((cur+' '+w).length>150&&cur){out.push(cur);cur=w}else cur=cur?cur+' '+w:w}if(cur)out.push(cur);return out}
+function ttsVoice(){const v=speechSynthesis.getVoices().filter(x=>/^th/i.test(x.lang));return v.find(x=>/kanya/i.test(x.name))||v[0]||null}
+function ttsPlay(paras,btn){ttsStop();const run=TTS.run;if(btn){btn.classList.add('on');btn.textContent='⏹'}
+  const voice=ttsVoice();let i=0;
+  const next=()=>{if(run!==TTS.run)return;if(i>=paras.length){ttsStop();return}
+    const p=paras[i++];document.querySelectorAll('.tts-on').forEach(e=>e.classList.remove('tts-on'));p.classList.add('tts-on');p.scrollIntoView({block:'center',behavior:'smooth'});
+    const ch=ttsChunks(ttsText(p));let j=0;
+    const say=()=>{if(run!==TTS.run)return;if(j>=ch.length){next();return}
+      const u=new SpeechSynthesisUtterance(ch[j++]);u.lang='th-TH';if(voice)u.voice=voice;u.rate=TTS.rate;u.onend=say;u.onerror=()=>{if(run===TTS.run)say()};speechSynthesis.speak(u)};
+    say()};
+  next()}
+function addTTS(root){if(!root||!('speechSynthesis' in window))return;
+  if(!document.getElementById('ttsCss')){const st=document.createElement('style');st.id='ttsCss';st.textContent='.tts-btn{border:1px solid currentColor;background:transparent;color:inherit;border-radius:50%;width:1.7em;height:1.7em;font-size:.8em;line-height:1;cursor:pointer;margin-right:.5em;opacity:.7;vertical-align:middle;padding:0}.tts-btn:hover,.tts-btn.on{opacity:1}.tts-on{outline:2px solid #4fc3f7;outline-offset:3px;border-radius:4px}.tts-bar{display:flex;gap:.6em;align-items:center;flex-wrap:wrap;margin:.6em 0;font-size:.9em}.tts-bar select,.tts-bar button{font:inherit}';document.head.appendChild(st)}
+  const boxes=root.querySelectorAll('.sheet').length?[...root.querySelectorAll('.sheet')]:[root];
+  boxes.forEach(box=>{
+    const paras=[...box.querySelectorAll('p')].filter(p=>!p.closest('table,figure,.qbox,.tts-bar,li,.row,.key')&&!p.classList.contains('small')&&!p.classList.contains('lead')&&ttsText(p).length>90);
+    if(!paras.length||box.dataset.tts)return;box.dataset.tts=1;
+    paras.forEach((p,k)=>{const b=document.createElement('button');b.className='tts-btn';b.type='button';b.title='ฟังต่อจากย่อหน้านี้';b.textContent='▶';
+      b.onclick=e=>{e.preventDefault();if(b.classList.contains('on')){ttsStop();return}ttsPlay(paras.slice(k),b)};p.prepend(b)});
+    const bar=document.createElement('div');bar.className='tts-bar';
+    bar.innerHTML='<button type="button" class="btn" data-a="all">▶ ฟังทั้งหมดในส่วนนี้</button><button type="button" class="btn" data-a="stop">⏹ หยุด</button><label>ความเร็ว <select><option value="0.7">ช้า</option><option value="0.85">ค่อนข้างช้า</option><option value="1">ปกติ</option><option value="1.2">เร็ว</option><option value="1.5">เร็วมาก</option></select></label>'+(ttsVoice()||!speechSynthesis.getVoices().length?'':'<span class="small">ไม่พบเสียงไทยในเครื่อง ติดตั้งเสียงไทยในการตั้งค่าระบบก่อน</span>');
+    const sel=bar.querySelector('select');sel.value=String(TTS.rate);if(sel.value!==String(TTS.rate))sel.value='1';
+    sel.onchange=()=>{TTS.rate=parseFloat(sel.value);try{localStorage.setItem('tu240tts',sel.value)}catch(e){}};
+    bar.querySelector('[data-a=all]').onclick=()=>ttsPlay(paras);bar.querySelector('[data-a=stop]').onclick=ttsStop;
+    paras[0].before(bar)})}
+if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
+
 function mineFmt(p){ // {{ทฤษฎี}} [[เสริม]] ==จำเป็นประโยค== **ต้องเขียน**
   return esc(p).replace(/\{\{([\s\S]+?)\}\}/g,'<span class="m-th">$1</span>').replace(/\[\[([\s\S]+?)\]\]/g,'<span class="m-opt">$1</span>')
     .replace(/\^\^([\s\S]+?)\^\^/g,'<b class="m-top">$1</b>').replace(/==([\s\S]+?)==/g,'<mark class="m-key">$1</mark>').replace(/\*\*([\s\S]+?)\*\*/g,'<b class="m-must">$1</b>');}
@@ -493,7 +526,7 @@ function drawMine(){if(!MINE)return;const box=$('mine');
   <h4>เรียงความ</h4><p class="small">ราว ${n.toLocaleString()} ตัวอักษร (ไม่นับช่องว่าง) ≈ ${(n/1500).toFixed(1)} หน้า ถ้าลายมือคุณเขียนได้ราว 1,500 ตัวอักษรต่อหน้า</p>
   ${a.essay.map(p=>`<p style="text-indent:2em">${mineFmt(p)}</p>`).join('')}
   <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');
-  $('mineLock').onclick=lockMine;
+  $('mineLock').onclick=lockMine;addTTS(box);
   if(local)$('mineEnc').onclick=async()=>{
     const E=await encryptMine(MINE_KEY,MINE);const blob=new Blob(['window.TU240_MINE_ENC='+JSON.stringify(E)+';\n'],{type:'text/javascript'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mine.enc.js';a.click();};
@@ -514,7 +547,7 @@ function showMine(obj,open){MINE=obj;
   if(!TABS.includes('mine')){TABS.push('mine');const nav=document.querySelector('[data-tab="refs"]');const b=document.createElement('button');b.setAttribute('role','tab');b.dataset.tab='mine';b.textContent='คำตอบของผม';
     b.onclick=()=>{go('mine');scrollTo(0,0)};nav.after(b);const sec=document.createElement('section');sec.className='panel';sec.id='mine';$('refs').after(sec);}
   drawMine();if(open){go('mine');scrollTo(0,0)}}
-function lockMine(){try{sessionStorage.removeItem('tu240mine')}catch(e){}
+function lockMine(){try{ttsStop()}catch(e){}try{sessionStorage.removeItem('tu240mine')}catch(e){}
   document.querySelector('[data-tab="mine"]')?.remove();$('mine')?.remove();const i=TABS.indexOf('mine');if(i>=0)TABS.splice(i,1);
   if(!window.TU240_MINE)MINE=null;go('overview');}
 async function unlockMine(){
