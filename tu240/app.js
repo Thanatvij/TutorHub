@@ -472,18 +472,29 @@ async function exportMD({topics,vocab,link}){
 }
 window.__tu240={exportMD,printHTML,buildPrompt,prose};
 
+function mineFmt(p){ // {{ทฤษฎี}} [[เสริม]] ==จำเป็นประโยค== **ต้องเขียน**
+  return esc(p).replace(/\{\{([\s\S]+?)\}\}/g,'<span class="m-th">$1</span>').replace(/\[\[([\s\S]+?)\]\]/g,'<span class="m-opt">$1</span>')
+    .replace(/==([\s\S]+?)==/g,'<mark class="m-key">$1</mark>').replace(/\*\*([\s\S]+?)\*\*/g,'<b class="m-must">$1</b>');}
+const mineKeys=a=>a.essay.flatMap(p=>[...p.matchAll(/==([\s\S]+?)==/g)].map(m=>m[1].replace(/\*\*/g,'').replace(/\{\{|\}\}/g,'')));
+const mineLen=(a,noTheory)=>a.essay.join('').replace(/\{\{[\s\S]+?\}\}/g,noTheory?'':'$&').replace(/\[\[|\]\]|\{\{|\}\}|==|\*\*/g,'').replace(/\s/g,'').length;
 function drawMine(){if(!MINE)return;const box=$('mine');
   const local=!!window.TU240_MINE;
-  box.innerHTML=`<h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)}</p>
-  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button>${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
-  MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=a.essay.join('').replace(/\s/g,'').length;return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
+  box.innerHTML=`<style>#mine .m-key{background:#fff3a3;padding:0 2px;border-radius:3px;color:inherit}#mine .m-must{font-weight:700}#mine .m-th{border-bottom:1px dotted #8a8;}#mine .m-opt{color:#777;font-style:italic}
+  #mine.stance .m-th{display:none}#mine .chips span{display:inline-block;background:#eef;border:1px solid #ccd;border-radius:12px;padding:1px 9px;margin:2px;font-size:.88em}#mine .keys li{margin:.3em 0}</style>
+  <h2>คำตอบของผม</h2><p class="lead">${esc(MINE.note)}</p>
+  <p class="small"><mark class="m-key">ไฮไลต์เหลือง</mark> = ประโยคที่ต้องจำให้ได้ทั้งประโยค · <b>ตัวหนา</b> = ต้องเขียนลงไปแน่ ๆ (ชื่อ ตัวเลข เหตุการณ์ ข้อสรุป) · <span class="m-th">ขีดจุดใต้</span> = ส่วนทฤษฎี/นิยาม (ซ่อนได้) · <span class="m-opt">เอียงเทา</span> = ตัดได้ถ้าเวลาไม่พอ</p>
+  <div class="row"><button class="btn" id="mineLock">ล็อกแท็บนี้</button><button class="btn" id="mineStance">โหมดจุดยืน: ซ่อนส่วนทฤษฎี</button>${local?'<button class="btn main" id="mineEnc">สร้างไฟล์เข้ารหัสสำหรับขึ้นเว็บ (mine.enc.js)</button>':''}</div>`+
+  MINE.answers.map(a=>{const t=T.find(x=>x.id===a.q);const n=mineLen(a,false),n2=mineLen(a,true);return `<div class="sheet"><h3>ข้อ ${qNum(t)} · ${esc(t.title)}</h3>
   <div class="qbox"><b>โจทย์</b>${esc(t.question)}</div>
   <div class="key"><b>จุดยืน:</b> ${esc(a.stance)}<br><b>มุมเสริม:</b> ${esc(a.angle)}</div>
   <h4>โครงที่ต้องจำ</h4><ol>${a.outline.map(o=>`<li>${esc(o)}</li>`).join('')}</ol>
-  <h4>เรียงความ</h4><p class="small">ราว ${n.toLocaleString()} ตัวอักษร (ไม่นับช่องว่าง) ≈ ${(n/CHARS_PER_PAGE).toFixed(1)} หน้ากระดาษเขียนมือ</p>
-  ${a.essay.map(p=>`<p style="text-indent:2em">${esc(p)}</p>`).join('')}
+  ${a.chips?`<h4>ชื่อ/ตัวเลขที่ต้องใส่ให้ครบ</h4><div class="chips">${a.chips.map(c=>`<span>${esc(c)}</span>`).join('')}</div>`:''}
+  <h4>ประโยคที่ต้องจำ (${mineKeys(a).length})</h4><ol class="keys">${mineKeys(a).map(k=>`<li>${esc(k)}</li>`).join('')}</ol>
+  <h4>เรียงความ</h4><p class="small">เต็ม ราว ${n.toLocaleString()} ตัวอักษร ≈ ${(n/CHARS_PER_PAGE).toFixed(1)} หน้า · โหมดจุดยืน (ไม่มีส่วนทฤษฎี) ≈ ${n2.toLocaleString()} ตัวอักษร ≈ ${(n2/CHARS_PER_PAGE).toFixed(1)} หน้า</p>
+  ${a.essay.map(p=>`<p style="text-indent:2em">${mineFmt(p)}</p>`).join('')}
   <h4>ถ้าโดนแย้ง</h4><p>${esc(a.counter)}</p></div>`}).join('');
   $('mineLock').onclick=lockMine;
+  $('mineStance').onclick=e=>{const on=box.classList.toggle('stance');e.target.textContent=on?'โหมดเต็ม: แสดงส่วนทฤษฎี':'โหมดจุดยืน: ซ่อนส่วนทฤษฎี';};
   if(local)$('mineEnc').onclick=async()=>{
     const E=await encryptMine(MINE_KEY,MINE);const blob=new Blob(['window.TU240_MINE_ENC='+JSON.stringify(E)+';\n'],{type:'text/javascript'});
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mine.enc.js';a.click();};
