@@ -127,3 +127,33 @@ details summary{cursor:pointer;font-weight:600}
 .dti-f .tcard dd{margin:0}
 @media (max-width:640px){.dti-f .tcard dl{grid-template-columns:1fr}.dti-f .tcard dt{margin-top:4px}}
 @media print{.dti-f .tcard{break-inside:avoid}}
+
+/* พิมพ์ PDF: หัวข้อต้องไม่หลุดจากตาราง/การ์ดที่ตามหลัง */
+@media print{
+  body.printing #printRoot h2,
+  body.printing #printRoot h3,
+  body.printing #printRoot h4,
+  body.printing #printRoot h5,
+  body.printing #printRoot .topic,
+  body.printing #printRoot p:has(+ table),
+  body.printing #printRoot p:has(+ .scroll),
+  body.printing #printRoot p:has(+ .warn),
+  body.printing #printRoot p:has(+ .rule),
+  body.printing #printRoot p:has(+ .case),
+  body.printing #printRoot p:has(+ .formula),
+  body.printing #printRoot p:has(+ .small),
+  body.printing #printRoot p:has(+ .tcard),
+  body.printing #printRoot p:has(+ .key),
+  body.printing #printRoot p:has(+ .grid),
+  body.printing #printRoot p:has(+ ul),
+  body.printing #printRoot p:has(+ ol),
+  body.printing #printRoot p:has(+ h4){break-after:avoid;page-break-after:avoid}
+  body.printing #printRoot h4+p,
+  body.printing #printRoot h3+p{break-before:avoid;page-break-before:avoid}
+  body.printing #printRoot h4+p:has(+ table),
+  body.printing #printRoot h4+p:has(+ .tcard){break-after:avoid}
+  body.printing #printRoot .scroll,
+  body.printing #printRoot table,
+  body.printing #printRoot .tcard{break-inside:avoid;page-break-inside:avoid}
+  body.printing #printRoot li{break-inside:avoid}
+}
