@@ -118,3 +118,12 @@ details summary{cursor:pointer;font-weight:600}
 .dti-f .mem{background:color-mix(in srgb,var(--hi,#ffe08a) 55%,transparent);padding:0 4px;border-radius:4px;font-weight:700}
 .dti-f .small{font-size:.88rem;color:var(--graphite,#5b6574)}
 @media print{.dti-f .grid{display:block}.dti-f .grid>div,.dti-f .warn,.dti-f .case{break-inside:avoid;margin:0 0 8pt}}
+
+.dti-f .tcard{border:1.5px solid var(--line);border-left:5px solid var(--focus,#2f6feb);border-radius:10px;padding:8px 14px;margin:12px 0}
+.dti-f .tcard h4{margin:4px 0 6px;border:0;padding:0}
+.dti-f .tcard .tth{font-weight:400;color:var(--graphite,#5b6574)}
+.dti-f .tcard dl{display:grid;grid-template-columns:84px minmax(0,1fr);gap:4px 10px;margin:0}
+.dti-f .tcard dt{font-weight:700;color:var(--graphite,#5b6574)}
+.dti-f .tcard dd{margin:0}
+@media (max-width:640px){.dti-f .tcard dl{grid-template-columns:1fr}.dti-f .tcard dt{margin-top:4px}}
+@media print{.dti-f .tcard{break-inside:avoid}}
