@@ -1,7 +1,7 @@
 /* รายชื่อวิชาในหน้าเลือกวิชา
    เพิ่มวิชาใหม่: คัดลอกหนึ่งบล็อก แล้วสร้างไฟล์ data/<id>.js ตามแบบ data/dti286.js
    status: "ready" = มีเนื้อหาแล้ว · "empty" = ยังรอเนื้อหา
-   custom: ใส่ path ถ้าวิชานั้นมีหน้าเว็บเฉพาะของตัวเอง (เช่น DTI232 ที่มีเครื่องมือ interactive) */
+   custom: ใส่ path ถ้าวิชานั้นมีหน้าเว็บเฉพาะของตัวเอง · external: ลิงก์เว็บแยก (เปิดแทนหน้าในเว็บนี้) · features: ลิงก์ย่อยใต้การ์ด (ถ้าไม่ใส่ใช้ 4 ลิงก์มาตรฐาน) */
 window.SUBJECTS = [
   {
     id: "tu240",
@@ -35,10 +35,15 @@ window.SUBJECTS = [
     id: "dti232",
     code: "DTI232",
     name: "ระเบียบวิธีเชิงลำดับขั้นตอนและการค้นหาอย่างชาญฉลาด",
-    exam: "สอบแล้ว · เก็บไว้ทบทวน",
+    exam: "สอบกลางภาคแล้ว · ย้ายไปเว็บ DTI232 เข้าใจอัลกอริทึม",
     status: "ready",
-    custom: "dti232/index.html",
-    tabs: { overview: "#home", study: "#p1", practice: "#px", predict: "#predict" }
+    external: "https://thanatvij.github.io/DTI232-learn/",
+    features: [
+      { label: "A* ทีละบรรทัด", href: "https://thanatvij.github.io/DTI232-learn/astar.html" },
+      { label: "กำหนดการพลวัต", href: "https://thanatvij.github.io/DTI232-learn/dp.html" },
+      { label: "เนื้อหาเดิม", href: "https://thanatvij.github.io/DTI232-learn/index.html#p2" },
+      { label: "เก็งข้อสอบ", href: "https://thanatvij.github.io/DTI232-learn/index.html#predict" }
+    ]
   },
   {
     id: "dti286",

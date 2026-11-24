@@ -46,16 +46,17 @@
 const g=document.getElementById('grid');
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 g.innerHTML=(window.SUBJECTS||[]).map(s=>{
-  const base=s.custom||`subject.html?s=${encodeURIComponent(s.id)}`;
+  const base=s.external||s.custom||`subject.html?s=${encodeURIComponent(s.id)}`;
+  const ext=!!s.external;
   const t=s.tabs||{overview:'#overview',study:'#study',practice:'#practice',predict:'#predict'};
   const ready=s.status==='ready';
   return `<article class="card ${ready?'':'empty'}">
     <div class="row" style="margin:0;justify-content:space-between"><span class="code">${esc(s.code)}</span><span class="chip ${ready?'ready':'empty'}">${ready?'พร้อมติว':'รอเนื้อหา'}</span></div>
     <div class="name ${s.name?'':'missing'}">${s.name?esc(s.name):'ยังไม่ได้ใส่ชื่อวิชา'}</div>
     <div class="meta">สอบ: ${s.exam?esc(s.exam):'ยังไม่ระบุ'}</div>
-    <a class="btn main open" href="${base}${t.overview}">เปิดวิชานี้</a>
+    <a class="btn main open" href="${ext?base:base+t.overview}">เปิดวิชานี้${ext?' ↗':''}</a>
     <nav class="feat" aria-label="ส่วนของ ${esc(s.code)}">
-      <a href="${base}${t.overview}">เนื้อหาสอบ</a><a href="${base}${t.study}">ติวเนื้อหา</a><a href="${base}${t.practice}">แบบฝึกหัด</a><a href="${base}${t.predict}">${esc(s.predictLabel||'เก็งข้อสอบ')}</a>
+      ${s.features?s.features.map(f=>`<a href="${esc(f.href)}">${esc(f.label)}</a>`).join(''):`<a href="${base}${t.overview}">เนื้อหาสอบ</a><a href="${base}${t.study}">ติวเนื้อหา</a><a href="${base}${t.practice}">แบบฝึกหัด</a><a href="${base}${t.predict}">${esc(s.predictLabel||'เก็งข้อสอบ')}</a>`}
     </nav>
     ${s.reviewPdf?`<a class="memory-link" href="${esc(s.reviewPdf)}" target="_blank" rel="noopener">📑 สไลด์ทบทวนความจำ</a>`:''}
   </article>`}).join('');
