@@ -5,7 +5,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const id=(new URLSearchParams(location.search).get('s')||'').toLowerCase().replace(/[^a-z0-9_-]/g,'');
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(`tutor:${id}:${k}`))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(`tutor:${id}:${k}`,JSON.stringify(v))}catch(e){}}};
 const TABS=['overview','study','practice','vocab'];
-let S=null;
+let S=null, editions=[], activeEdition=null, countdownTimer=null;
 
 function empty(what){return `<div class="empty-state"><p><b>ยังไม่มี${what}ที่ยืนยันแล้ว</b></p><p>ส่วนนี้จะเพิ่มได้ทันทีเมื่อมีเอกสารหรือประกาศจากผู้สอน</p></div>`}
 function stats(){const d=S||{},el=$('pstats');if(!el)return;const r=store.get('read',[]),a=store.get('ans',{});
@@ -13,14 +13,32 @@ function stats(){const d=S||{},el=$('pstats');if(!el)return;const r=store.get('r
 function go(t){if(!TABS.includes(t))t='overview';if(t==='overview')stats();
   document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===t));
-  try{history.replaceState(null,'',`?s=${id}#${t}`)}catch(e){}
+  try{history.replaceState(null,'',`?s=${id}${activeEdition?"&exam="+encodeURIComponent(activeEdition.id):""}#${t}`)}catch(e){}
   window.tutorTrack?.('tab_view',{subject:id,tab:t});}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{go(b.dataset.tab);scrollTo(0,0)});
 addEventListener('hashchange',()=>go((location.hash||'#overview').slice(1)));
 
-window.registerSubject=function(data){S=data;render()};
+window.registerSubject=function(data){
+  editions=Array.isArray(data.editions)?data.editions:[];
+  const requested=new URLSearchParams(location.search).get('exam');
+  activeEdition=editions.find(e=>e.id===requested)||editions[0]||null;
+  S=activeEdition?activeEdition.data:data;
+  if(editions.length){
+    let picker=$('examEdition');
+    if(!picker){picker=document.createElement('div');picker.id='examEdition';picker.className='sheet row';document.querySelector('main').prepend(picker)}
+    const drawPicker=()=>{
+      picker.innerHTML=`<b>ชุดทบทวน</b>${editions.map(e=>`<button class="btn modebtn ${e.id===activeEdition.id?'on':''}" data-edition="${esc(e.id)}" aria-pressed="${e.id===activeEdition.id}">${esc(e.label)}</button>`).join('')}`;
+      picker.querySelectorAll('[data-edition]').forEach(b=>b.onclick=()=>{
+        activeEdition=editions.find(e=>e.id===b.dataset.edition);S=activeEdition.data;drawPicker();render();scrollTo(0,0);
+      });
+    };
+    drawPicker();
+  }
+  render();
+};
 
 function render(){
+  if(countdownTimer!==null){clearInterval(countdownTimer);countdownTimer=null}
   const d=S||{},ex=d.exam||{};
   document.title=`${d.code||id.toUpperCase()} · ห้องติวสอบ`;
   $('code').textContent=d.code||id.toUpperCase();
@@ -36,7 +54,7 @@ function render(){
   if(ex.iso){const tick=()=>{const ms=new Date(ex.iso)-new Date();const el=$('cd');if(!el)return;
     if(isNaN(ms)){el.textContent='รูปแบบวันเวลาไม่ถูกต้อง';return}
     if(ms<=0){el.textContent='ถึงเวลาสอบแล้ว';return}
-    const dd=Math.floor(ms/864e5),hh=Math.floor(ms/36e5)%24,mm=Math.floor(ms/6e4)%60;el.textContent=`${dd} วัน ${hh} ชั่วโมง ${mm} นาที`};tick();setInterval(tick,30000)}
+    const dd=Math.floor(ms/864e5),hh=Math.floor(ms/36e5)%24,mm=Math.floor(ms/6e4)%60;el.textContent=`${dd} วัน ${hh} ชั่วโมง ${mm} นาที`};tick();countdownTimer=setInterval(tick,30000)}
 
   /* ---------- STUDY ---------- */
   const st=d.study||[];
@@ -45,6 +63,7 @@ function render(){
     const read=new Set(store.get('read',[]));
     const modes=store.get('mode',{});
     const hasSplit=s=>s.quick&&s.full; // section supports the quick/full toggle
+    const anySplit=st.some(hasSplit);
     const modeOf=s=>hasSplit(s)?(modes[s.id]==='full'?'full':'quick'):null;
     const bodyOf=s=>hasSplit(s)?(modeOf(s)==='full'?s.full:s.quick):(s.full||s.html||s.quick||'');
     const printBody=(s,mode)=>mode==='full'?(s.full||s.html||s.quick||''):mode==='quick'?(s.quick||s.full||s.html||''):bodyOf(s);
@@ -53,7 +72,7 @@ function render(){
       let root=document.getElementById('printRoot');
       if(!root){root=document.createElement('div');root.id='printRoot';document.body.appendChild(root)}
       const modeLabel=mode==='full'?'เนื้อหาเต็ม':mode==='quick'?'สรุปก่อนสอบ':(sections.length===1&&modeOf(sections[0])==='full'?'เนื้อหาเต็ม':'สรุปก่อนสอบ');
-      root.innerHTML=`<header class="print-head"><div class="print-code">${esc(d.code||id.toUpperCase())}</div><h1>${esc(d.name||'')}</h1><p>${esc(scope)} · ${modeLabel}</p></header><main>${sections.map((s,i)=>`<article class="print-section"><div class="topic">${esc(s.topic||'')}</div><h2>${esc(s.title)}</h2>${printBody(s,mode)}</article>`).join('')}</main><footer class="print-page-number" aria-hidden="true"></footer>`;
+      root.innerHTML=`<header class="print-head"><div class="print-code">${esc(d.code||id.toUpperCase())}</div><h1>${esc(d.name||'')}</h1><p>${activeEdition?esc(activeEdition.label)+' · ':''}${esc(scope)} · ${modeLabel}</p></header><main>${sections.map((s,i)=>`<article class="print-section"><div class="topic">${esc(s.topic||'')}</div><h2>${esc(s.title)}</h2>${printBody(s,mode)}</article>`).join('')}</main><footer class="print-page-number" aria-hidden="true"></footer>`;
       const oldTitle=document.title;
       document.title=safeName(`${d.code||id}-${scope}-${modeLabel}`);
       document.body.classList.add('printing');
@@ -69,9 +88,9 @@ function render(){
       </div>`;
     $('study').innerHTML=`<h2>ติวเนื้อหา</h2>
       <div class="sheet row" style="justify-content:space-between;align-items:center">
-        <b>โหมดการอ่านทุกบท</b>
-        <div><div class="row"><button class="btn" id="modeAllQuick">สรุปทั้งหมด</button><button class="btn" id="modeAllFull">เนื้อหาเต็มทั้งหมด</button></div>
-        <div class="row"><button class="btn pdfbtn" id="downloadAllQuick">ดาวน์โหลดสรุปทั้งเล่ม (PDF)</button><button class="btn pdfbtn" id="downloadAllFull">ดาวน์โหลดเนื้อหาเต็มทั้งเล่ม (PDF)</button></div></div>
+        <b>${anySplit?'โหมดการอ่านทุกบท':'ดาวน์โหลดทั้งเล่ม'}</b>
+        <div><div class="row" ${anySplit?'':'style="display:none"'}><button class="btn" id="modeAllQuick">สรุปทั้งหมด</button><button class="btn" id="modeAllFull">เนื้อหาเต็มทั้งหมด</button></div>
+        <div class="row"><button class="btn pdfbtn" id="downloadAllQuick">ดาวน์โหลดสรุปทั้งเล่ม (PDF)</button><button class="btn pdfbtn" id="downloadAllFull" ${anySplit?'':'style="display:none"'}>ดาวน์โหลดเนื้อหาเต็มทั้งเล่ม (PDF)</button></div></div>
       </div>
       <div class="study"><nav class="toc" aria-label="หัวข้อ"><div class="hint" id="prog"></div><div class="bar"><i id="pbar"></i></div>${st.map(s=>`<a href="#sec-${esc(s.id)}" data-id="${esc(s.id)}" class="${read.has(s.id)?'done':''}">${esc(s.title)}</a>`).join('')}</nav>
       <div>${st.map(s=>`<article class="sheet sec" id="sec-${esc(s.id)}">${s.topic?`<div class="topic">${esc(s.topic)}</div>`:''}<h3>${esc(s.title)}</h3>${toggleBtns(s)}
@@ -130,7 +149,7 @@ function render(){
     $('ft').onchange=draw;
     $('fs')&&($('fs').onchange=()=>{rebuildTopics();draw()});
     $('shuf').onclick=()=>{order.sort(()=>Math.random()-.5);draw()};
-    $('rst').onclick=()=>{if(confirm('ล้างคำตอบทั้งหมดของวิชานี้?')){store.set('ans',{});draw()}};
+    $('rst').onclick=()=>{if(confirm(activeEdition?'ล้างคำตอบของชุดที่กำลังดู?':'ล้างคำตอบทั้งหมดของวิชานี้?')){const a=store.get('ans',{});pr.forEach(q=>delete a[q.id]);store.set('ans',a);draw()}};
     draw();
   }
 

@@ -49,9 +49,11 @@ window.SUBJECTS = [
     id: "dti286",
     code: "DTI286",
     name: "โหมดของประสบการณ์มนุษย์ (Modes of Human Experience)",
-    exam: "พฤหัสบดี 24 ก.ย. 2569 · 09.00–11.00",
+    exam: "ปลายภาค · พุธ 25 พ.ย. 2569 · 09.00–12.00",
     status: "ready",
-    reviewPdf: "dti286-memory-review.pdf"
+    reviewPdf: "dti286-memory-review.pdf",
+    predictLabel: "คำศัพท์",
+    tabs: { overview: "#overview", study: "#study", practice: "#practice", predict: "#vocab" }
   },
   {
     id: "pb287",

@@ -106,3 +106,15 @@ details summary{cursor:pointer;font-weight:600}
   body.printing #printRoot .print-page-number::after{content:"หน้า " counter(page)}
   .tutor-feedback,.feedback-dialog{display:none!important}
 }
+
+/* DTI286 final summary blocks */
+.dti-f .warn{border:1.5px solid var(--line);border-left:5px solid var(--warn,#c2410c);border-radius:10px;padding:10px 14px;margin:10px 0}
+.dti-f .case{border:1.5px solid var(--line);border-left:5px solid var(--good,#1a7f37);border-radius:10px;padding:10px 14px;margin:10px 0}
+.dti-f .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0}
+.dti-f .grid>div{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.dti-f .grid h5{margin:0 0 4px;font-size:1rem}
+.dti-f .tag{display:inline-block;font-size:.74rem;font-weight:700;border:1.5px solid var(--warn,#c2410c);color:var(--warn,#c2410c);border-radius:999px;padding:0 8px;margin-left:4px;vertical-align:2px}
+.dti-f .tag.b{border-color:var(--focus,#2f6feb);color:var(--focus,#2f6feb)}
+.dti-f .mem{background:color-mix(in srgb,var(--hi,#ffe08a) 55%,transparent);padding:0 4px;border-radius:4px;font-weight:700}
+.dti-f .small{font-size:.88rem;color:var(--graphite,#5b6574)}
+@media print{.dti-f .grid{display:block}.dti-f .grid>div,.dti-f .warn,.dti-f .case{break-inside:avoid;margin:0 0 8pt}}
